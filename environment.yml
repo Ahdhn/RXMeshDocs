@@ -1,0 +1,13 @@
+name: RXMeshDocs
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      - mkdocs==1.4.2
+      - mkdocs-material==9.0.13
+      - mkdocs-macros-plugin==0.7.0
+      - markdown-include
+      - pygments
