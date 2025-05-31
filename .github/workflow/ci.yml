@@ -14,7 +14,7 @@ jobs:
         uses: conda-incubator/setup-miniconda@v3
         with:
           auto-activate-base: false
-          activate-environment: RXMeshDocs
+          activate-environment: ""
           environment-file: environment.yml
           python-version: 3.10  # must match what's in environment.yml
 
