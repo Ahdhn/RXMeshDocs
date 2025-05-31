@@ -8,15 +8,19 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Miniconda
         uses: conda-incubator/setup-miniconda@v3
         with:
+          miniconda-version: "latest"
           auto-activate-base: false
-          activate-environment: ""
+          activate-environment: RXMeshDocs
           environment-file: environment.yml
           python-version: 3.10  # must match what's in environment.yml
+      - run: |
+          conda info
+          conda list
 
       - name: Build MkDocs site
         shell: bash -l {0}
