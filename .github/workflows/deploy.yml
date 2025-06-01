@@ -16,7 +16,7 @@ jobs:
           auto-activate-base: false
           activate-environment: RXMeshDocs
           environment-file: environment.yml
-          python-version: 3.10  # must match what's in environment.yml
+          
 
       - name: Build MkDocs site
         shell: bash -l {0}
