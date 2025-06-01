@@ -1,6 +1,6 @@
 name: Deploy
 
-on: [push, pull_request, workflow_dispatch]
+on: [push, workflow_dispatch]
 
 jobs:
   build:
@@ -22,6 +22,11 @@ jobs:
         shell: bash -l {0}
         run: |
           mkdocs build
+
+      - name: List site contents
+        shell: bash -l {0}
+        run: |
+          ls -R ./site
 
       - name: Setup Pages
         uses: actions/configure-pages@v3
