@@ -2,3 +2,22 @@ site_name: RXMesh
 site_url: https://mydomain.org/mysite
 theme:
   name: material
+  features:
+    - navigation.sections
+    - toc.integrate
+    - navigation.top
+    - content.code.copy
+
+nav:
+  - About: 
+    - about/compilation.md
+    - about/dependencies.md
+    - about/license.md
+    - about/bibtex.md
+  - Basics:
+    - basics/basic.md
+  - RXMesh: 
+    - rxmesh/static.md
+    - rxmesh/matrices.md
+    - rxmesh/dynamic.md
+
