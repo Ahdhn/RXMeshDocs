@@ -19,7 +19,7 @@ theme:
       accent: light green
       toggle:
         icon: material/lightbulb-outline
-        name: Switch to light mode
+        name: Switch to light mode  
 
   name: material
   features:
@@ -31,12 +31,16 @@ theme:
     - navigation.indexes    
     #- navigation.tabs
 
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+
 nav:
+  - Home: index.md
   - About: 
-    - about/compilation.md
-    - about/dependencies.md
-    - about/license.md
-    - about/bibtex.md
+    - Building: about/building.md        
+    - Bibtex: about/bibtex.md
   - Basics:
     - basics/basic.md
   - RXMesh: 
