@@ -2,22 +2,20 @@
 
 Before diving into code, it is important to understand how to *think* when using RXMesh.
 
-The mental model is simple: you start with a triangle mesh—typically provided as a standard `.obj` file—and RXMesh takes care of converting it into a GPU-friendly data structure. Once the mesh is loaded, everything you do revolves around performing operations *per mesh element*—whether that is a vertex, edge, or face.
+The mental model is simple: you start with a triangle mesh—typically provided as a standard `.obj` file—and RXMesh takes care of building a GPU-friendly data structure. Once the mesh is loaded, everything you do revolves around performing operations *per mesh element*—whether that is a vertex, edge, or face.
 
 These per-element operations are typically expressed using **parallel loops** or **query kernels**. RXMesh handles the connectivity, locality, and memory layout behind the scenes. You get to write clean code that feels high-level but is executed with low-level efficiency.
 
 RXMesh provides an easy way to allocate and manipulate **mesh attribute**. Mesh attributes are values associated with mesh elements: a vertex color, a face normal, a scalar tag per edge, etc. Attributes are **strongly typed**—a vertex attribute knows it is tied to vertices, and can not be accidentally used with faces or edges. This gives your code more clarity and safety.
 
-Attributes also live in multiple locations—on the **host** or on the **device**—and you control when and how they move. This separation allows RXMesh to give you performance without compromising on flexibility.
+By default, attributes live on both the **host** or on the **device**—and you control when and how they move. This separation allows RXMesh to give you performance without compromising on flexibility.
 
 In this first example, we will walk through a simple but complete application:  
 - Load a triangle mesh from an `.obj` file  
 - Access vertex positions  
 - Define and compute vertex colors and face normals  
+- Move computed attributes from device to the host 
 - Visualize the results using Polyscope
-
-This example touches on key RXMesh ideas: attributes, mesh traversal, kernel execution, and device/host memory movement. Later sections will go deeper into how these pieces work and how they scale up to large and dynamic meshes.
-
 
 
 ```c++
@@ -73,6 +71,7 @@ polyscope::show();
 
 If everything is set up correctly, you should see something like this—your mesh visualized with per-vertex color and face normals:
 
-<p align="left">
-  <img src="dragon.jpg" alt="Dragon" width="400"/>
-</p>
+![Dragon](dragon.jpg)
+
+
+This example touches on several core RXMesh concepts: mesh attributes, element-wise traversal, kernel execution, and moving data between the host and device. In the following sections, we will explore these ideas in more depth—covering additional operations on static meshes, advanced attribute manipulation, working with sparse and dense matrices, handling dynamic connectivity, and performing automatic differentiation on the GPU.
