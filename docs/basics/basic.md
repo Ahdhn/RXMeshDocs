@@ -71,7 +71,9 @@ polyscope::show();
 
 If everything is set up correctly, you should see something like this—your mesh visualized with per-vertex color and face normals:
 
-![Dragon](dragon.jpg)
+<figure markdown="span">
+  ![Dragon](dragon.jpg){ width="600"}
+</figure>
 
 
 This example touches on several core RXMesh concepts: mesh attributes, element-wise traversal, kernel execution, and moving data between the host and device. In the following sections, we will explore these ideas in more depth—covering additional operations on static meshes, advanced attribute manipulation, working with sparse and dense matrices, handling dynamic connectivity, and performing automatic differentiation on the GPU.
