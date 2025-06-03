@@ -5,21 +5,11 @@ repo_name: RXMesh
 theme:  
   icon:
     repo: fontawesome/brands/github
-  palette:     
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
-      primary: white
-      accent: light green
-      toggle:
-        icon: material/lightbulb 
-        name: Switch to dark mode    
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      primary: white
-      accent: light green
-      toggle:
-        icon: material/lightbulb-outline
-        name: Switch to light mode  
+  palette:
+    scheme: default
+    primary: white
+    accent: light green    
+    
 
   name: material
   features:
