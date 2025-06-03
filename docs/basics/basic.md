@@ -6,7 +6,7 @@ The mental model is simple: you start with a triangle mesh—typically provided 
 
 These per-element operations are typically expressed using **parallel loops** or **query kernels**. RXMesh handles the connectivity, locality, and memory layout behind the scenes. You get to write clean code that feels high-level but is executed with low-level efficiency.
 
-A central concept in RXMesh is the **mesh attribute**. Attributes are values associated with mesh elements: a vertex color, a face normal, a scalar tag per edge, etc. Attributes are **strongly typed**—a vertex attribute knows it is tied to vertices, and can not be accidentally used with faces or edges. This gives your code more clarity and safety.
+RXMesh provides an easy way to allocate and manipulate **mesh attribute**. Mesh attributes are values associated with mesh elements: a vertex color, a face normal, a scalar tag per edge, etc. Attributes are **strongly typed**—a vertex attribute knows it is tied to vertices, and can not be accidentally used with faces or edges. This gives your code more clarity and safety.
 
 Attributes also live in multiple locations—on the **host** or on the **device**—and you control when and how they move. This separation allows RXMesh to give you performance without compromising on flexibility.
 
@@ -23,6 +23,7 @@ This example touches on key RXMesh ideas: attributes, mesh traversal, kernel exe
 ```c++
 using namespace rxmesh;
 
+//Initialize RXMesh. 0 is the GPU device ID. 
 rx_init(0);
 
 RXMeshStatic rx("mesh.obj");
@@ -73,5 +74,5 @@ polyscope::show();
 If everything is set up correctly, you should see something like this—your mesh visualized with per-vertex color and face normals:
 
 <p align="left">
-  <img src="../assets/getting_started.jpg" alt="Dragon" width="400"/>
+  <img src="dragon.jpg" alt="Dragon" width="400"/>
 </p>
