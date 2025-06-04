@@ -26,6 +26,9 @@ This documentation is structured to guide you from setup to advanced use of RXMe
 
 Feel free to jump to the section most relevant to you—or follow them in order for a full tour.
 
+## Replicability
+
+This repo was awarded the [replicability stamp](https://www.replicabilitystamp.org/#https-github-com-owensgroup-rxmesh) by the Graphics Replicability Stamp Initiative (GRSI).
 
 ## License
 
