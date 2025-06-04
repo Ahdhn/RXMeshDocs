@@ -17,16 +17,3 @@ Mesh operations are expressed either through parallel iteration over individual 
 <hr style="border: none; border-top: 1px solid #ccc; margin: 2em 0;" />
 
 ---  -->
-
-
-<hr style="border: none; border-top: 1px solid #888;"/>
-
-## Boundary Vertices 
-
-## Scale
-
-## Bounding box
-
-## Exporting 
-
-## Vertex/face list

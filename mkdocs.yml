@@ -49,6 +49,7 @@ nav:
         - run_kernel: rxmesh/run_kernel.md
       - Visualization: rxmesh/visualization.md
       - Indexing: rxmesh/indexing.md      
+      - Misc: rxmesh/static_misc.md
     - Attributes: rxmesh/attributes.md
     - Matrices: rxmesh/matrices.md
     - RXMeshDynamic: rxmesh/dynamic.md    
