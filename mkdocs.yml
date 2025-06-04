@@ -41,7 +41,10 @@ nav:
       - Introduction: rxmesh/static.md
       - Initialization: rxmesh/initialization.md
       - Attributes Management: rxmesh/attributes_management.md
-      - Operations: rxmesh/operations.md
+      - Operations:         
+        - for_each: rxmesh/for_each.md
+        - run_query_kernel: rxmesh/run_query_kernel.md
+        - run_kernel: rxmesh/run_kernel.md
       - Visualization: rxmesh/visualization.md
       - Indexing: rxmesh/indexing.md      
     - Attributes: rxmesh/attributes.md
@@ -52,5 +55,7 @@ nav:
   - References: 
     - Handles: rxmesh/handles.md
     - Iterators: rxmesh/iterators.md
+    - LaunchBox: rxmesh/launch_box.md
     - Logging: rxmesh/logging.md
+    - ShmemAllocator: rxmesh/shmem_allocator.md
 
