@@ -1,6 +1,6 @@
-# Building
+# **Building**
 
-## Prerequisites
+## **Prerequisites**
 
 RXMesh supports Ubuntu, Windows, and WSL. To build the library, you will need:
 
@@ -19,7 +19,8 @@ sudo apt-get install -y xorg-dev libglu1-mesa-dev freeglut3-dev mesa-common-dev
 ```
 This ensures that GUI-based rendering works correctly on most Ubuntu systems.
 
-## Dependencies
+---
+## **Dependencies**
 
 RXMesh relies on the following libraries:
 
@@ -35,7 +36,8 @@ RXMesh relies on the following libraries:
 
 > All dependencies are automatically downloaded and built via CMake (no manual installation needed).
 
-## Compilation
+---
+## **Compilation**
 
 To compile RXMesh and its test/apps:
 
@@ -59,8 +61,8 @@ cmake --build . --target <target_name> --config Release --parallel 8
 > Replace `<target_name>` with the name of the app/test you want.
 
 
-
-## Optional CMake Flags
+---
+## **Optional CMake Flags**
 
 You can customize the build using the following CMake options:
 

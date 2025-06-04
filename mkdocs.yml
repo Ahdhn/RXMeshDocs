@@ -13,12 +13,13 @@ theme:
 
   name: material
   features:
-    - navigation.sections
+    - navigation.sections    
     - toc.integrate
     - navigation.top
     - content.code.copy    
     - navigation.expand
     - navigation.indexes    
+    - content.tabs.link
     #- navigation.tabs
 
 markdown_extensions:
@@ -35,10 +36,15 @@ nav:
     - Bibtex: about/bibtex.md
   - Basics:
     - Getting Started: basics/basic.md
-  - RXMesh: 
-    - RXMeshStatic: rxmesh/static.md
+  - User's Guide: 
+    - RXMeshStatic: rxmesh/static.md      
+    - Attributes: rxmesh/attribues.md
     - Matrices: rxmesh/matrices.md
-    - RXMeshDynamic: rxmesh/dynamic.md
+    - RXMeshDynamic: rxmesh/dynamic.md    
     - Autodiff: rxmesh/ad.md
     - Applications: rxmesh/apps.md
+  - References: 
+    - Handles: rxmesh/handles.md
+    - Iterators: rxmesh/iterators.md
+    - Logging: rxmesh/logging.md
 

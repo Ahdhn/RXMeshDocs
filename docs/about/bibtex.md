@@ -1,4 +1,4 @@
-# Bibtex
+# **Bibtex**
 
 RXMesh is developed and maintained by researchers and citations help us track its impact and support future work. If RXMesh plays a role in your research or publications, please consider citing it or giving us a mention. We truly appreciate it!
 

@@ -1,4 +1,4 @@
-# Getting Started
+# **Getting Started**
 
 Before diving into code, it is important to understand how to *think* when using RXMesh.
 
