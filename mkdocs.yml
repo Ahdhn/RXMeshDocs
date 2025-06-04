@@ -42,9 +42,9 @@ nav:
       - Initialization: rxmesh/initialization.md
       - Attributes Management: rxmesh/attributes_management.md
       - Operations: rxmesh/operations.md
-      - Indexing: rxmesh/indexing.md
       - Visualization: rxmesh/visualization.md
-    - Attributes: rxmesh/attribues.md
+      - Indexing: rxmesh/indexing.md      
+    - Attributes: rxmesh/attributes.md
     - Matrices: rxmesh/matrices.md
     - RXMeshDynamic: rxmesh/dynamic.md    
     - Autodiff: rxmesh/ad.md
