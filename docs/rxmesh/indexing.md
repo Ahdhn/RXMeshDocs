@@ -1,8 +1,8 @@
-# **5. Indexing **
+# ** Indexing **
 
 ---
-## **5.1 Linear ID **
+## ** Linear ID **
 
 ---
-## **5.2 `map_to_global` **
+## ** `map_to_global` **
 

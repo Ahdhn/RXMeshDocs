@@ -2,7 +2,9 @@ site_name: RXMesh
 site_url: https://mydomain.org/mysite
 repo_url: https://github.com/owensgroup/RXMesh
 repo_name: RXMesh
-theme:  
+theme: 
+  logo: assets/rx.png
+  favicon: assets/rx.png
   icon:
     repo: fontawesome/brands/github
   palette:
