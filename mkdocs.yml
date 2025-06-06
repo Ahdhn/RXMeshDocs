@@ -52,7 +52,10 @@ nav:
       - Misc: rxmesh/static_misc.md
     - Attributes: rxmesh/attributes.md
     - Reduction: rxmesh/reduce_handle.md
-    - Matrices: rxmesh/matrices.md
+    - Matrices:
+      - Dense Matrices: rxmesh/dense_matrices.md
+      - Sparse Matrices: rxmesh/sparse_matrices.md
+    - Solvers: rxmesh/solvers.md
     - RXMeshDynamic: rxmesh/dynamic.md    
     - Autodiff: rxmesh/ad.md
     - Applications: rxmesh/apps.md

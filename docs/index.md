@@ -20,11 +20,15 @@ This documentation is structured to guide you from setup to advanced use of RXMe
 - **RXMesh**:
     - [**RXMeshStatic**](rxmesh/static) – Working with static meshes.
     - [**Matrices**](rxmesh/matrices) – Using the sparse and dense matrix infrastructure.
+    - [**Solvers**](rxmesh/solvers) – Linear system solvers integrated with RXMesh’s mesh and matrix infrastructure.
     - [**RXMeshDynamic**](rxmesh/dynamic) – Handling dynamic mesh updates on the GPU.
     - [**Autodiff**](rxmesh/ad) – Differentiating mesh-based computations on the GPU.
     - [**Applications**](rxmesh/apps) – Examples that combine these features in real tasks.
 
 Feel free to jump to the section most relevant to you—or follow them in order for a full tour.
+
+
+You can also start a new project using the [RXMesh template project](https://github.com/owensgroup/RXMeshTemplate) which sets up all dependencies and build scripts for you.
 
 ## Replicability
 
