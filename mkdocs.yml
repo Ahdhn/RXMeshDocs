@@ -51,6 +51,7 @@ nav:
       - Indexing: rxmesh/indexing.md      
       - Misc: rxmesh/static_misc.md
     - Attributes: rxmesh/attributes.md
+    - Reduction: rxmesh/reduce_handle.md
     - Matrices: rxmesh/matrices.md
     - RXMeshDynamic: rxmesh/dynamic.md    
     - Autodiff: rxmesh/ad.md
