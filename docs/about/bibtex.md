@@ -27,7 +27,7 @@ RXMesh is developed and maintained by researchers and citations help us track it
 
 
 ```
-@article{Mahmoud:2025:RAG,
+@article{Mahmoud:2025:DMP,
   author       = {Ahmed H. Mahmoud and Serban D. Porumbescu and John D. Owens},
   title        = {Dynamic Mesh Processing on the GPU},
   journal      = {ACM Transactions on Graphics},
