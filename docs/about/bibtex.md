@@ -36,9 +36,9 @@ RXMesh is developed and maintained by researchers and citations help us track it
   number       = 4,
   month        = aug,
   issue_date   = {August 2025},
-  articleno    = ,
-  numpages     = ,
-  pages        = ,
+  articleno    = {},
+  numpages     = {},
+  pages        = {},
   url          = {https://escholarship.org/uc/item/1sm051d2},
   doi          = {10.1145/3731162}  
 }
