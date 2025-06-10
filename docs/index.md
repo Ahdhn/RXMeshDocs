@@ -28,7 +28,7 @@ This documentation is structured to guide you from setup to advanced use of RXMe
 Feel free to jump to the section most relevant to you—or follow them in order for a full tour.
 
 
-You can also start a new project using the [RXMesh template project](https://github.com/owensgroup/RXMeshTemplate) which sets up all dependencies and build scripts for you.
+You can also start a new project using the [RXMesh template project](https://github.com/owensgroup/RXMeshTemplate) which sets up all dependencies and build scripts using pre-configured CMake setup for GPU/CUDA development, cross-platform support (Windows/Linux) and GitHub Actions CI/CD pipeline.
 
 ## Replicability
 
