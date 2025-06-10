@@ -3,7 +3,7 @@
 `run_query_kernel` is used to launch a device kernel that operates on a **mesh element and its local neighborhood**. It takes a query type (e.g., `Op::EV`), which specifies what neighborhood relation to access—such as "incident vertices of an edge" or "adjacent faces of a face". This is the *simplest* entry point in RXMesh for neighborhood-based computations. The neighborhood is exposed through an [Iterator](iterators.md) whose type depends on the query's output element—for example, a vertex one-ring query (`VV`) yields a `VertexIterator`.
 
 ---
-## Supported Queries Types
+## **Supported Queries Types**
 
 **Vertex Queries** 
 
@@ -33,7 +33,7 @@
 
 ---
 
-## Usage
+## **Usage**
 
 `run_query_kernel` comes in two variants:
 
@@ -50,7 +50,7 @@ Lambdas must be annotated `__device__` and capture variables by value.
 
 ---
 
-## Example: Computing Edge Length
+## **Example: Computing Edge Length**
 
 This example computes the squared rest length for each edge using the `EV` query.
 

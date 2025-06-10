@@ -11,6 +11,7 @@ RXMesh provides an easy way to allocate and manipulate **mesh attribute**. Mesh 
 By default, attributes live on both the **host** or on the **device**—and you control when and how they move. This separation allows RXMesh to give you performance without compromising on flexibility.
 
 In this first example, we will walk through a simple but complete application:  
+
 - Load a triangle mesh from an `.obj` file  
 - Access vertex positions  
 - Define and compute vertex colors and face normals  

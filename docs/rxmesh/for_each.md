@@ -5,7 +5,7 @@ RXMesh provides four `for_each` functions that apply a user-defined lambda funct
 You can run them on the host (parallelized with OpenMP) or the device (as CUDA kernels). The lambda must accept a mesh element [handle](handles.md) (e.g., VertexHandle) and be annotated with `__device__` if executed on the GPU. For GPU execution, all data captures must be by value. More about lambda function in CUDA can be found [here](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#extended-lambda).
 
 ---
-## Functions
+## **Functions**
 - `for_each_vertex(location, lambda, stream, with_omp)`
 
 - `for_each_edge(location, lambda, stream, with_omp)`
@@ -16,7 +16,7 @@ You can run them on the host (parallelized with OpenMP) or the device (as CUDA k
 
 ---
 
-## Usage
+## **Usage**
 
 - `location`: one of `HOST` or `DEVICE`
 - `lambda`: must match the handle type (e.g., `const FaceHandle fh`).
@@ -24,7 +24,7 @@ You can run them on the host (parallelized with OpenMP) or the device (as CUDA k
 - `with_omp`: only relevant when executing on the host; defaults to true.
 
 ---
-## Example: Per-Vertex Coloring
+## **Example: Per-Vertex Coloring**
 ```c++
 RXMeshStatic rx("mesh.obj");
 auto vertex_pos = rx.get_input_vertex_coordinates();
@@ -40,7 +40,7 @@ rx.for_each_vertex(
 ```
 
 ---
-## When to Use
+## **When to Use**
 
 Use `for_each` when:
 

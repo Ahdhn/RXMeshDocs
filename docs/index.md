@@ -10,8 +10,9 @@ RXMesh also features a **sparse and dense matrix** infrastructure that is tightl
 
 RXMesh also includes support for **Automatic Differentiation** (AD) directly on the GPU. Built on top of its compact mesh and matrix infrastructure, RXMesh enables efficient computation of gradients and Hessians for geometry processing tasks such as optimization, simulation, and inverse design. This AD system is designed to be modular and fast, allowing users to differentiate through mesh-based computations with minimal overhead.
 
+--- 
 
-## Documentation Roadmap
+## **Documentation Roadmap**
 
 This documentation is structured to guide you from setup to advanced use of RXMesh:
 
@@ -30,10 +31,14 @@ Feel free to jump to the section most relevant to you—or follow them in order 
 
 You can also start a new project using the [RXMesh template project](https://github.com/owensgroup/RXMeshTemplate) which sets up all dependencies and build scripts using pre-configured CMake setup for GPU/CUDA development, cross-platform support (Windows/Linux) and GitHub Actions CI/CD pipeline.
 
-## Replicability
+--- 
+
+## **Replicability**
 
 This repo was awarded the [replicability stamp](https://www.replicabilitystamp.org/#https-github-com-owensgroup-rxmesh) by the Graphics Replicability Stamp Initiative (GRSI).
 
-## License
+--- 
+
+## **License**
 
 RXMesh is released under the [BSD-2-Clause License](https://github.com/owensgroup/RXMesh/blob/main/LICENSE). Please note that RXMesh depends on several third-party libraries, each with its own license. See the [dependencies list](about/building/#dependencies) and consult the respective projects for their licensing terms.

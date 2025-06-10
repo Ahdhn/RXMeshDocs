@@ -10,7 +10,7 @@ There are two categories of `run_kernel` overloads: one where RXMesh computes th
 
 ---
 
-## Signature (Automatic Launch Configuration)
+## **Signature (Automatic Launch Configuration)**
 
 ```cpp
 template <uint32_t blockSize, typename KernelT, typename... ArgsT>
@@ -35,7 +35,7 @@ This overload performs all the setup work. It is the most flexible but also expe
 - `args...`: Inputs passed directly to the kernel.
 
 ---
-## Signature (With `LaunchBox`)
+## **Signature (With `LaunchBox`)**
 
 ```cpp
 template <uint32_t blockSize, typename KernelT, typename... ArgsT>
@@ -49,7 +49,7 @@ void run_kernel(
 This version assumes you have already initialized a `LaunchBox<blockSize>` using `prepare_launch_box`. This is useful when the same kernel is launched multiple times, as it avoids recomputing the launch configuration.
 
 ---
-## Signature (`LaunchBox` + Default Stream)
+## **Signature (`LaunchBox` + Default Stream)**
 
 ```cpp
 template <uint32_t blockSize, typename KernelT, typename... ArgsT>
@@ -63,7 +63,7 @@ Same as above, but runs on the default CUDA stream.
 
 ---
 
-## Signature (Minimal Form)
+## **Signature (Minimal Form)**
 
 ```cpp
 template <uint32_t blockSize, typename KernelT, typename... ArgsT>
@@ -80,7 +80,7 @@ In the next section, we will discuss how to write your own query-enabled CUDA ke
 
 ---
 
-## Writing a Custom CUDA Kernel with Query Operations
+## **Writing a Custom CUDA Kernel with Query Operations**
 When using `run_kernel`, you need to write your own CUDA kernel. This gives you full control over the execution and allows you to combine query operations with custom computation and shared memory logic. Below is a breakdown of the key components in such a kernel.
 
 ### Example: Computing Face Normals
