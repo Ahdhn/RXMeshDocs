@@ -28,18 +28,20 @@ RXMesh is developed and maintained by researchers and citations help us track it
 
 ```
 @article{Mahmoud:2025:DMP,
-  author       = {Ahmed H. Mahmoud and Serban D. Porumbescu and John D. Owens},
-  title        = {Dynamic Mesh Processing on the GPU},
-  journal      = {ACM Transactions on Graphics},
-  year         = 2025,
-  volume       = 44,
-  number       = 4,
-  month        = aug,
-  issue_date   = {August 2025},
-  articleno    = {},
-  numpages     = {},
-  pages        = {},
-  url          = {https://escholarship.org/uc/item/1sm051d2},
-  doi          = {10.1145/3731162}  
+  author     = {Mahmoud, Ahmed H. and Porumbescu, Serban D. and Owens, John D.},
+  title      = {Dynamic Mesh Processing on the {GPU}},
+  journal    = {ACM Transactions on Graphics},
+  year       = 2025,
+  volume     = 44,
+  number     = 4,
+  month      = jul,
+  issue_date = {August 2025},
+  issn       = {0730-0301},
+  articleno  = {136},
+  numpages   = {19},
+  url        = {https://escholarship.org/uc/item/1sm051d2},
+  doi        = {10.1145/3731162},
+  publisher  = {Association for Computing Machinery},
+  address    = {New York, NY, USA}
 }
 ```
