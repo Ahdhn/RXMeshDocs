@@ -39,6 +39,7 @@ RXMesh is developed and maintained by researchers and citations help us track it
   issn       = {0730-0301},
   articleno  = {136},
   numpages   = {19},
+  pages      = {136:1--19},
   url        = {https://escholarship.org/uc/item/1sm051d2},
   doi        = {10.1145/3731162},
   publisher  = {Association for Computing Machinery},
