@@ -32,6 +32,9 @@ markdown_extensions:
       anchor_linenums: true
   - pymdownx.superfences
 
+extra_css:
+  - css/extra.css
+
 nav:
   - Home: index.md
   - About: 
