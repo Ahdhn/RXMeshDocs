@@ -1,4 +1,4 @@
-# ** Introduction **
+# ** Overview **
 
 `RXMeshStatic` is the main class for representing and processing static triangle meshes with fixed connectivity—meshes that do not change topology at runtime. This class constructs a compact, patch-based internal representation of the input mesh and exposes interfaces for managing mesh attributes, launching element-wise operations, and querying connectivity.
 

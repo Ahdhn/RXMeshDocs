@@ -3,6 +3,7 @@ site_url: https://mydomain.org/mysite
 repo_url: https://github.com/owensgroup/RXMesh
 repo_name: RXMesh
 theme: 
+  name: material
   logo: assets/rx.png
   favicon: assets/rx.png
   icon:
@@ -10,19 +11,19 @@ theme:
   palette:
     scheme: default
     primary: white
-    accent: light green    
-    
-
-  name: material
+    accent: light green 
+  font:
+    text: 'PT Serif'
+    code: 'Inconsolata'     
   features:
-    - navigation.sections    
-    - toc.integrate
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - content.tabs.link   
+    # - toc.integrate
     - navigation.top
-    - content.code.copy    
-    - navigation.expand
+    - content.code.copy        
     - navigation.indexes    
-    - content.tabs.link
-    #- navigation.tabs
 
 markdown_extensions:
   - attr_list
@@ -40,7 +41,7 @@ nav:
     - Getting Started: basics/basic.md
   - User's Guide: 
     - RXMeshStatic: 
-      - Introduction: rxmesh/static.md
+      - Overview: rxmesh/static.md
       - Initialization: rxmesh/initialization.md
       - Attributes Management: rxmesh/attributes_management.md
       - Operations:         
@@ -65,4 +66,5 @@ nav:
     - LaunchBox: rxmesh/launch_box.md
     - Logging: rxmesh/logging.md
     - ShmemAllocator: rxmesh/shmem_allocator.md
-
+    - Query: rxmesh/query.md
+    - Cavity: rxmesh/cavity.md
