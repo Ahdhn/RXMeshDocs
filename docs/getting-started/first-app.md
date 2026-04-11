@@ -2,13 +2,13 @@
 
 Before diving into code, it is important to understand how to *think* when using RXMesh.
 
-The mental model is simple: you start with a triangle mesh—typically provided as a standard `.obj` file—and RXMesh takes care of building a GPU-friendly data structure. Once the mesh is loaded, everything you do revolves around performing operations *per mesh element*—whether that is a vertex, edge, or face.
+The mental model is you start with a triangle mesh (typically provided as a standard `.obj` file) and RXMesh takes care of building a the GPU data structure. Once the mesh is loaded, everything you do revolves around performing local operations *per mesh element* whether that is a vertex, edge, or face.
 
 These per-element operations are typically expressed using **parallel loops** or **query kernels**. RXMesh handles the connectivity, locality, and memory layout behind the scenes. You get to write clean code that feels high-level but is executed with low-level efficiency.
 
-RXMesh provides an easy way to allocate and manipulate **mesh attributes**. Mesh attributes are values associated with mesh elements: a vertex color, a face normal, a scalar tag per edge, etc. Attributes are **strongly typed**—a vertex attribute knows it is tied to vertices, and cannot be accidentally used with faces or edges. This gives your code more clarity and safety.
+RXMesh provides an easy way to allocate and manipulate **mesh attributes**. Mesh attributes are values associated with mesh elements, e.g., a vertex color, a face normal, or a scalar tag per edge. Attributes are **strongly typed**, i.e., a vertex attribute knows it is tied to vertices and cannot be accidentally used with faces or edges. This gives your code more clarity and safety.
 
-By default, attributes live on both the **host** and the **device**—and you control when and how they move. This separation allows RXMesh to give you performance without compromising on flexibility.
+By default, attributes live on both the **host** and the **device** and you control when and how they move. This separation allows RXMesh to give you performance without compromising on flexibility.
 
 In this first example, we will walk through a simple but complete application:  
 
@@ -57,7 +57,7 @@ rx.run_query_kernel<Op::FV, 256>(
         face_normal.from_glm(face_id, n);
     });
 
-//Move attributes to the host 
+//Move attributes from the device to the host 
 vertex_color.move(DEVICE, HOST);
 face_normal.move(DEVICE, HOST);
 
@@ -70,11 +70,11 @@ polyscope::show();
 
 ```
 
-If everything is set up correctly, you should see something like this—your mesh visualized with per-vertex color and face normals:
+If everything is set up correctly, you should see something like this, i.e., a mesh visualized with per-vertex color and face normals:
 
 <figure markdown="span">
   ![Dragon](dragon.jpg){ width="600"}
 </figure>
 
 
-This example touches on several core RXMesh concepts: mesh [attributes](../rxmesh/attributes.md), element-wise traversal with [`for_each`](../rxmesh/for_each.md), [query kernel](../rxmesh/run_query_kernel.md) execution, and moving data between the host and device. In the following sections, we will explore these ideas in more depth—covering additional operations on static meshes, advanced attribute manipulation, working with sparse and dense matrices, handling dynamic connectivity, and performing automatic differentiation on the GPU.
+This example touches on several core RXMesh concepts, e.g., mesh [attributes](../rxmesh/attributes.md), element-wise traversal with [`for_each`](../rxmesh/for_each.md), [query kernel](../rxmesh/run_query_kernel.md) execution, and moving data between the host and device. In the following sections, we will explore these ideas in more depth and cover [additional operations on static meshes](../rxmesh/static.md), [advanced attribute manipulation](../rxmesh/attributes.md), working with [sparse](../rxmesh/sparse_matrices.md) and [dense](../rxmesh/dense_matrices.md) matrices, [linear system solvers](../rxmesh/solvers.md), [handling dynamic connectivity](../rxmesh/dynamic.md), and performing [automatic differentiation](../rxmesh/ad.md) on the GPU.
