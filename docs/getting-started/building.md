@@ -6,9 +6,9 @@ RXMesh supports Ubuntu, Windows, and WSL. To build the library, you will need:
 
 - **CUDA Toolkit ≥ 11.1.0**  
 - A **C++17-capable compiler** (e.g., GCC 9+, MSVC 2019+, Clang 10+)
-- **CMake ≥ 3.15**
+- **CMake ≥ 3.24**
 - **Git**
-- An **NVIDIA GPU** for running the applications
+- An **NVIDIA GPU** with compute capability 7.0 or higher (Volta and newer) for running the applications
 
 If you are using WSL, ensure your distribution is correctly configured to access the GPU via [WSL 2 and CUDA](https://docs.nvidia.com/cuda/wsl-user-guide/index.html).
 
@@ -32,9 +32,16 @@ RXMesh relies on the following libraries:
 - [Eigen](https://gitlab.com/libeigen/eigen) – linear algebra backend
 - [Polyscope](https://github.com/nmwsharp/polyscope) – mesh visualization
 - [cereal](https://github.com/USCiLab/cereal.git) – serialization
-- [METIS](https://github.com/KarypisLab/METIS) – mesh partitioning experiments
+- [METIS](https://github.com/KarypisLab/METIS) – mesh partitioning
+- [CLI11](https://github.com/CLIUtils/CLI11) – command-line argument parsing
+- [cuBQL](https://github.com/NVIDIA/cuBQL) – GPU bounding volume hierarchy queries
 
-> All dependencies are automatically downloaded and built via CMake (no manual installation needed).
+**Optional:**
+
+- [SuiteSparse](https://github.com/sergiud/SuiteSparse) – sparse direct solvers (enabled with `RX_USE_SUITESPARSE=ON`)
+- [cuDSS](https://developer.nvidia.com/cudss) – NVIDIA GPU direct sparse solver (enabled with `RX_USE_CUDSS=ON`, requires a separate install)
+
+> All required dependencies are automatically downloaded and built via CMake (no manual installation needed).
 
 ---
 ## **Compilation**
@@ -66,11 +73,14 @@ cmake --build . --target <target_name> --config Release --parallel 8
 
 You can customize the build using the following CMake options:
 
-| Option              | Default | Description                                      |
-|---------------------|---------|--------------------------------------------------|
-| `RX_USE_POLYSCOPE`  | `ON`    | Enable Polyscope for visualization.             |
-| `RX_BUILD_TESTS`    | `ON`    | Build RXMesh unit tests.                        |
-| `RX_BUILD_APPS`     | `ON`    | Build RXMesh example applications.              |
+| Option              | Default | Description                                               |
+|---------------------|---------|-----------------------------------------------------------|
+| `RX_USE_POLYSCOPE`  | `ON`    | Enable Polyscope for visualization.                       |
+| `RX_BUILD_TESTS`    | `ON`    | Build RXMesh unit tests.                                  |
+| `RX_BUILD_APPS`     | `ON`    | Build RXMesh example applications.                        |
+| `RX_USE_DOUBLE `    | `OFF`   | Use double precision for reading input vertex coordinates.|
+| `RX_USE_SUITESPARSE`| `OFF`   | Enable SuiteSparse sparse direct solvers.                 |
+| `RX_USE_CUDSS`      | `OFF`   | Enable NVIDIA cuDSS direct solver (requires cuDSS).       |
 
 To disable any of these options, simply pass them to `cmake` when configuring:
 
