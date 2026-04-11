@@ -27,7 +27,7 @@ void run_kernel(
 
 This overload performs all the setup work. It is the most flexible but also expects more inputs.
 
-- `op`: A list of one or more query operations to be used inside the kernel. See [Supported Queries Types](#supported-queries-types).
+- `op`: A list of one or more query operations to be used inside the kernel. See [Supported Query Types](run_query_kernel.md#supported-queries-types).
 - `oriented`: Whether query results need to be sorted.
 - `with_vertex_valence`: Whether to precompute vertex valences and store them in shared memory.
 - `is_concurrent`: Whether the queries will be accessed concurrently in the same kernel body.

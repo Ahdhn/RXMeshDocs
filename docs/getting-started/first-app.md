@@ -1,4 +1,4 @@
-# **Getting Started**
+# **Your First Application**
 
 Before diving into code, it is important to understand how to *think* when using RXMesh.
 
@@ -6,9 +6,9 @@ The mental model is simple: you start with a triangle mesh—typically provided 
 
 These per-element operations are typically expressed using **parallel loops** or **query kernels**. RXMesh handles the connectivity, locality, and memory layout behind the scenes. You get to write clean code that feels high-level but is executed with low-level efficiency.
 
-RXMesh provides an easy way to allocate and manipulate **mesh attribute**. Mesh attributes are values associated with mesh elements: a vertex color, a face normal, a scalar tag per edge, etc. Attributes are **strongly typed**—a vertex attribute knows it is tied to vertices, and can not be accidentally used with faces or edges. This gives your code more clarity and safety.
+RXMesh provides an easy way to allocate and manipulate **mesh attributes**. Mesh attributes are values associated with mesh elements: a vertex color, a face normal, a scalar tag per edge, etc. Attributes are **strongly typed**—a vertex attribute knows it is tied to vertices, and cannot be accidentally used with faces or edges. This gives your code more clarity and safety.
 
-By default, attributes live on both the **host** or on the **device**—and you control when and how they move. This separation allows RXMesh to give you performance without compromising on flexibility.
+By default, attributes live on both the **host** and the **device**—and you control when and how they move. This separation allows RXMesh to give you performance without compromising on flexibility.
 
 In this first example, we will walk through a simple but complete application:  
 
@@ -77,4 +77,4 @@ If everything is set up correctly, you should see something like this—your mes
 </figure>
 
 
-This example touches on several core RXMesh concepts: mesh attributes, element-wise traversal, kernel execution, and moving data between the host and device. In the following sections, we will explore these ideas in more depth—covering additional operations on static meshes, advanced attribute manipulation, working with sparse and dense matrices, handling dynamic connectivity, and performing automatic differentiation on the GPU.
+This example touches on several core RXMesh concepts: mesh [attributes](../rxmesh/attributes.md), element-wise traversal with [`for_each`](../rxmesh/for_each.md), [query kernel](../rxmesh/run_query_kernel.md) execution, and moving data between the host and device. In the following sections, we will explore these ideas in more depth—covering additional operations on static meshes, advanced attribute manipulation, working with sparse and dense matrices, handling dynamic connectivity, and performing automatic differentiation on the GPU.

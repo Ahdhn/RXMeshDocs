@@ -3,7 +3,7 @@
 `run_query_kernel` is used to launch a device kernel that operates on a **mesh element and its local neighborhood**. It takes a query type (e.g., `Op::EV`), which specifies what neighborhood relation to access—such as "incident vertices of an edge" or "adjacent faces of a face". This is the *simplest* entry point in RXMesh for neighborhood-based computations. The neighborhood is exposed through an [Iterator](iterators.md) whose type depends on the query's output element—for example, a vertex one-ring query (`VV`) yields a `VertexIterator`.
 
 ---
-## **Supported Queries Types**
+## **Supported Query Types**
 
 **Vertex Queries** 
 
@@ -63,7 +63,7 @@ auto len = *rx.add_edge_attribute<T>("eLength", 1);
 constexpr int blockSize = 256;
 
 rx.run_query_kernel<Op::EV, blockSize>(
-    [=] device(const EdgeHandle& eh, const VertexIterator& iter) {
+    [=] __device__(const EdgeHandle& eh, const VertexIterator& iter) {
         Eigen::Vector3<T> a = x.to_eigen<3>(iter[0]);
         Eigen::Vector3<T> b = x.to_eigen<3>(iter[1]);
 

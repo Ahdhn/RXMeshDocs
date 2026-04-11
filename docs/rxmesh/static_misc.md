@@ -14,9 +14,9 @@ The function sets the first component of each entry to 1 if the corresponding ve
 ## ** Scale **
 To scale the mesh so that it fits within a given axis-aligned bounding box, use:
 
-```cppp
- rx.scale(lower_bound, upper_bound)
- ```
+```cpp
+rx.scale(lower_bound, upper_bound)
+```
 
 Both `lower_bound` and `upper_bound` are of type `glm::fvec3`. This modifies the coordinates returned by `get_input_vertex_coordinates()` and can be useful for normalization or fitting meshes into canonical spaces.
 

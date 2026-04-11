@@ -1,11 +1,11 @@
 site_name: RXMesh
-site_url: https://mydomain.org/mysite
+site_url: https://ahdhn.github.io/RXMeshDocs/
 repo_url: https://github.com/owensgroup/RXMesh
 repo_name: RXMesh
 theme: 
   name: material
-  logo: assets/rx.png
-  favicon: assets/rx.png
+  logo: assets/rx.svg
+  favicon: assets/rx.svg
   icon:
     repo: fontawesome/brands/github
   palette:
@@ -20,7 +20,6 @@ theme:
     - navigation.tracking
     - navigation.sections
     - content.tabs.link   
-    # - toc.integrate
     - navigation.top
     - content.code.copy        
     - navigation.indexes    
@@ -37,37 +36,40 @@ extra_css:
 
 nav:
   - Home: index.md
-  - About: 
-    - Building: about/building.md        
-    - Bibtex: about/bibtex.md
-  - Basics:
-    - Getting Started: basics/basic.md
-  - User's Guide: 
-    - RXMeshStatic: 
-      - Overview: rxmesh/static.md
-      - Initialization: rxmesh/initialization.md
-      - Attributes Management: rxmesh/attributes_management.md
-      - Operations:         
-        - for_each: rxmesh/for_each.md
-        - run_query_kernel: rxmesh/run_query_kernel.md
-        - run_kernel: rxmesh/run_kernel.md
-      - Visualization: rxmesh/visualization.md
-      - Indexing: rxmesh/indexing.md      
-      - Misc: rxmesh/static_misc.md
-    - Attributes: rxmesh/attributes.md
-    - Reduction: rxmesh/reduce_handle.md
-    - Matrices:
-      - Dense Matrices: rxmesh/dense_matrices.md
-      - Sparse Matrices: rxmesh/sparse_matrices.md
+  - Getting Started:
+    - Building: getting-started/building.md
+    - Your First Application: getting-started/first-app.md
+    - Key Concepts: getting-started/concepts.md
+  - Static Mesh Processing:
+    - Overview: rxmesh/static.md
+    - Initialization: rxmesh/initialization.md
+    - Attributes:
+      - Managing Attributes: rxmesh/attributes_management.md
+      - Working with Attributes: rxmesh/attributes.md
+    - Operations:
+      - for_each: rxmesh/for_each.md
+      - Query Kernels: rxmesh/run_query_kernel.md
+      - Custom Kernels: rxmesh/run_kernel.md
+    - Reductions: rxmesh/reduce_handle.md
+    - Visualization: rxmesh/visualization.md
+    - Indexing: rxmesh/indexing.md
+    - Utilities: rxmesh/static_misc.md
+  - Matrices & Solvers:
+    - Dense Matrices: rxmesh/dense_matrices.md
+    - Sparse Matrices: rxmesh/sparse_matrices.md
     - Solvers: rxmesh/solvers.md
-    - RXMeshDynamic: rxmesh/dynamic.md    
-    - Autodiff: rxmesh/ad.md
-    - Applications: rxmesh/apps.md
-  - References: 
+  - Dynamic Mesh Processing:
+    - Overview: rxmesh/dynamic.md
+    - Cavity Operations: rxmesh/cavity.md
+  - Automatic Differentiation: rxmesh/ad.md
+  - Applications & Examples: rxmesh/apps.md
+  - Reference:
     - Handles: rxmesh/handles.md
     - Iterators: rxmesh/iterators.md
+    - Query Object: rxmesh/query.md
     - LaunchBox: rxmesh/launch_box.md
-    - Logging: rxmesh/logging.md
     - ShmemAllocator: rxmesh/shmem_allocator.md
-    - Query: rxmesh/query.md
-    - Cavity: rxmesh/cavity.md
+    - Logging: rxmesh/logging.md
+  - About:
+    - Citation: about/bibtex.md
+    - License: about/license.md

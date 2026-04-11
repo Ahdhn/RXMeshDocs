@@ -1,44 +1,52 @@
+---
+hide:
+  - toc
+---
+
 #
 
 <p align="left">
-  <img src="assets/rx.png" alt="RXMesh Logo" width="400"/>
+  <img src="assets/rx.svg" alt="RXMesh Logo" width="400"/>
 </p>
 
-RXMesh is a library for processing triangle mesh entirely on the GPU. RXMesh goal is to provide a high-performance, generic, and compact data structure that can handle meshes regardless of their quality (e.g., non-manifold). RXMesh support both **static** and **dynamic** (where mesh connectivity changes) mesh processing operations. Our programming model/API helps to hide the complexity of the data structure and provides an intuitive access model for different use cases.
+RXMesh is a GPU-accelerated framework for mesh processing. It lets you write geometry processing applications (e.g., smoothing, remeshing, parameterization, simulation, and more) that run entirely on the GPU, without manually managing connectivity data structures, memory layouts, or kernel launch configurations.
 
-RXMesh also features a **sparse and dense matrix** infrastructure that is tightly coupled with the mesh data structure. We expose various `cuSolver`, `cuSparse`, and `cuBlas` operations through the sparse and dense matrices, tailored for geometry processing applications.
+```c++
+// Load a triangle mesh and build the GPU data structure
+RXMeshStatic rx("mesh.obj");
 
-RXMesh also includes support for **Automatic Differentiation** (AD) directly on the GPU. Built on top of its compact mesh and matrix infrastructure, RXMesh enables efficient computation of gradients and Hessians for geometry processing tasks such as optimization, simulation, and inverse design. This AD system is designed to be modular and fast, allowing users to differentiate through mesh-based computations with minimal overhead.
+auto coords = *rx.get_input_vertex_coordinates();
 
---- 
+// Allocate a 3-component float attribute on every face
+auto normals = *rx.add_face_attribute<float>("fNormals", 3);
 
-## **Documentation Roadmap**
+// For each face, query its vertices (Op::FV) using 256 threads per block
+rx.run_query_kernel<Op::FV, 256>(
+    // Device lambda function runs on the GPU; [=] captures attributes by value
+    [=] __device__(FaceHandle fh, VertexIterator& fv) mutable {
 
-This documentation is structured to guide you from setup to advanced use of RXMesh:
+        // fv[0], fv[1], fv[2] are the face's three vertex handles
+        vec3<float> n = cross(coords.to_glm<3>(fv[1]) - coords.to_glm<3>(fv[0]),
+                               coords.to_glm<3>(fv[2]) - coords.to_glm<3>(fv[0]));
 
-- **About**– How to [build](about/building) and [cite](about/bibtex) RXMesh.
-- **Getting Started** – Your [first](basics/basic) RXMesh application: compute face normals and visualize them.
-- **RXMesh**:
-    - [**RXMeshStatic**](rxmesh/static) – Working with static meshes.
-    - [**Matrices**](rxmesh/matrices) – Using the sparse and dense matrix infrastructure.
-    - [**Solvers**](rxmesh/solvers) – Linear system solvers integrated with RXMesh’s mesh and matrix infrastructure.
-    - [**RXMeshDynamic**](rxmesh/dynamic) – Handling dynamic mesh updates on the GPU.
-    - [**Autodiff**](rxmesh/ad) – Differentiating mesh-based computations on the GPU.
-    - [**Applications**](rxmesh/apps) – Examples that combine these features in real tasks.
+        // Write the result back to the face attribute
+        normals.from_glm(fh, normalize(n));
+    });
+```
 
-Feel free to jump to the section most relevant to you—or follow them in order for a full tour.
+Under the hood, RXMesh partitions the mesh into compact **patches** that fit in GPU shared memory, enabling fast neighborhood queries without global memory access. The API hides this complexity behind a small set of concepts (e.g., **handles**, **attributes**, and **query operations**) so you can focus on the algorithm, not the data structure.
 
+**What RXMesh provides:**
 
-You can also start a new project using the [RXMesh template project](https://github.com/owensgroup/RXMeshTemplate) which sets up all dependencies and build scripts using pre-configured CMake setup for GPU/CUDA development, cross-platform support (Windows/Linux) and GitHub Actions CI/CD pipeline.
+- **[Static mesh processing](rxmesh/static.md):** Parallel per-element operations and neighborhood queries over meshes with fixed connectivity.
+- **[Dynamic mesh processing](rxmesh/dynamic.md):** Topology-changing operations (edge flips, splits, collapses) with automatic patch management.
+- **[Sparse and dense matrices](rxmesh/dense_matrices.md):** A linear algebra layer tightly coupled with the mesh, backed by cuSolver, cuSparse, and cuBLAS, with direct and iterative [solvers](rxmesh/solvers.md).
+- **[Automatic differentiation](rxmesh/ad.md):** GPU forward-mode AD for computing gradients and Hessians of mesh-based energies, with built-in optimizers.
+
+RXMesh handles meshes of any quality, including non-manifold inputs. To get started, head to the [Getting Started](getting-started/building.md) section, or bootstrap a new project with the [RXMesh template project](https://github.com/owensgroup/RXMeshTemplate).
 
 --- 
 
 ## **Replicability**
 
-This repo was awarded the [replicability stamp](https://www.replicabilitystamp.org/#https-github-com-owensgroup-rxmesh) by the Graphics Replicability Stamp Initiative (GRSI).
-
---- 
-
-## **License**
-
-RXMesh is released under the [BSD-2-Clause License](https://github.com/owensgroup/RXMesh/blob/main/LICENSE). Please note that RXMesh depends on several third-party libraries, each with its own license. See the [dependencies list](about/building/#dependencies) and consult the respective projects for their licensing terms.
+This repo was awarded the [replicability stamp](https://www.replicabilitystamp.org/#https-github-com-owensgroup-rxmesh) by the Graphics Replicability Stamp Initiative.

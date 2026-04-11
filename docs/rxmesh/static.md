@@ -1,19 +1,20 @@
-# ** Overview **
+# **Overview**
 
-`RXMeshStatic` is the main class for representing and processing static triangle meshes with fixed connectivity—meshes that do not change topology at runtime. This class constructs a compact, patch-based internal representation of the input mesh and exposes interfaces for managing mesh attributes, launching element-wise operations, and querying connectivity.
+`RXMeshStatic` is the main class for representing and processing static triangle meshes—meshes with fixed connectivity that does not change at runtime. It is the starting point for most RXMesh applications.
 
-The input to `RXMeshStatic` is typically a `.obj` file containing a triangle mesh. During construction, RXMesh parses the mesh and builds a data structure optimized for GPU execution. RXMesh uses [handles](handles.md) to represent mesh elements, which can be converted to *continuous* indices when needed. For details, see [Indexing](indexing.md).
+During construction, `RXMeshStatic` parses the input mesh (from an `.obj` file or in-memory face list) and builds a compact, [patch-based](../getting-started/concepts.md#patches) GPU data structure optimized for parallel execution. Once constructed, it exposes the full API for mesh processing:
 
-Users interact with `RXMeshStatic` by defining attributes associated with vertices, edges, or faces. Each attribute is defined by its element type, value type, and dimensionality. Attributes can be allocated on either the host, device, or both and transferred explicitly between them. See [Attribute Management](attributes_management.md) for more.
+- **[Initialization](initialization.md)** — Constructors, patching options, and how to provide vertex coordinates.
+- **Attributes** — Define typed per-element data. See [Managing Attributes](attributes_management.md) for allocation and [Working with Attributes](attributes.md) for access and manipulation.
+- **Operations** — Run parallel computations over mesh elements:
+    - [`for_each`](for_each.md) — Apply a lambda per vertex, edge, or face (no neighbor access).
+    - [Query Kernels](run_query_kernel.md) — Access local neighborhoods (e.g., face vertices, vertex one-ring).
+    - [Custom Kernels](run_kernel.md) — Full control with multiple queries, shared memory, and custom logic.
+- **[Reductions](reduce_handle.md)** — Compute global aggregates (dot products, norms, argmin/argmax) over attributes.
+- **[Visualization](visualization.md)** — Render meshes and attributes with Polyscope.
+- **[Indexing](indexing.md)** — Convert between handles, linear IDs, and original input indices.
+- **[Utilities](static_misc.md)** — Boundary detection, bounding box, mesh export (OBJ/VTK), and more.
 
-Mesh operations are expressed either through parallel iteration over individual elements (e.g., `for_each_vertex`) or via query kernels (e.g., `run_query_kernel<Op::FV>`) that provide access to local neighborhoods. These kernels execute entirely on the GPU and support computations that depend on adjacent elements. See [Operations](operations.md) for more information.
+`RXMeshStatic` uses [handles](handles.md) to identify mesh elements. Handles are lightweight 64-bit IDs that encode a patch ID and a local index. They are used throughout the API to read and write attributes, and are passed into kernel lambdas as the primary way to refer to vertices, edges, and faces.
 
-
-<!-- <hr style="border: none; border-top: 1px solid #888;"/>
-
-<hr style="border: none; border-top: 2px solid #ccc;" />
-
-
-<hr style="border: none; border-top: 1px solid #ccc; margin: 2em 0;" />
-
----  -->
+For operations that change mesh topology (edge flips, splits, collapses), see [Dynamic Mesh Processing](dynamic.md).
