@@ -1,20 +1,18 @@
 # **Overview**
 
-`RXMeshStatic` is the main class for representing and processing static triangle meshes—meshes with fixed connectivity that does not change at runtime. It is the starting point for most RXMesh applications.
+`RXMeshStatic` is the main class for representing and processing static triangle meshes, i.e., meshes with fixed connectivity that does not change at runtime. 
 
 During construction, `RXMeshStatic` parses the input mesh (from an `.obj` file or in-memory face list) and builds a compact, [patch-based](../getting-started/concepts.md#patches) GPU data structure optimized for parallel execution. Once constructed, it exposes the full API for mesh processing:
 
-- **[Initialization](initialization.md)** — Constructors, patching options, and how to provide vertex coordinates.
-- **Attributes** — Define typed per-element data. See [Managing Attributes](attributes_management.md) for allocation and [Working with Attributes](attributes.md) for access and manipulation.
-- **Operations** — Run parallel computations over mesh elements:
-    - [`for_each`](for_each.md) — Apply a lambda per vertex, edge, or face (no neighbor access).
-    - [Query Kernels](run_query_kernel.md) — Access local neighborhoods (e.g., face vertices, vertex one-ring).
-    - [Custom Kernels](run_kernel.md) — Full control with multiple queries, shared memory, and custom logic.
-- **[Reductions](reduce_handle.md)** — Compute global aggregates (dot products, norms, argmin/argmax) over attributes.
-- **[Visualization](visualization.md)** — Render meshes and attributes with Polyscope.
-- **[Indexing](indexing.md)** — Convert between handles, linear IDs, and original input indices.
-- **[Utilities](static_misc.md)** — Boundary detection, bounding box, mesh export (OBJ/VTK), and more.
-
-`RXMeshStatic` uses [handles](handles.md) to identify mesh elements. Handles are lightweight 64-bit IDs that encode a patch ID and a local index. They are used throughout the API to read and write attributes, and are passed into kernel lambdas as the primary way to refer to vertices, edges, and faces.
+- **[Initialization](initialization.md)**: Constructors, patching options, and how to provide vertex coordinates.
+- **Attributes**: Define typed per-element data. See [Managing Attributes](attributes_management.md) for allocation and [Working with Attributes](attributes.md) for access and manipulation.
+- **Operations**: Run parallel computations over mesh elements:
+    - [`for_each`](for_each.md): Apply a lambda per vertex, edge, or face (no neighbor access).
+    - [Query Kernels](run_query_kernel.md): Access local neighborhoods (e.g., face vertices, vertex one-ring).
+    - [Custom Kernels](run_kernel.md): Full control with multiple queries, shared memory, and custom logic.
+- **[Reductions](reduce_handle.md)**: Compute global aggregates (dot products, norms, argmin/argmax) over attributes.
+- **[Visualization](visualization.md)**: Render meshes and attributes with Polyscope.
+- **[Indexing](indexing.md)**: Convert between handles, linear IDs, and original input indices.
+- **[Utilities](static_misc.md)**: Boundary detection, bounding box, mesh export (OBJ/VTK), and more.
 
 For operations that change mesh topology (edge flips, splits, collapses), see [Dynamic Mesh Processing](dynamic.md).
