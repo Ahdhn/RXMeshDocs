@@ -1,6 +1,6 @@
 # **Initialization**
 
-`RXMeshStatic` can be constructed in two ways, depending on whether the input mesh is stored in a file or directly provided as face connectivity in memory.
+`RXMeshStatic` can be constructed in two ways, depending on whether the input mesh is stored in a file or directly provided as face connectivity and vertex coordinates in memory.
 
 ---
 
@@ -12,11 +12,11 @@ RXMeshStatic(const std::string obj_file_path,
              const uint32_t    patch_size   = 512);
 ```
 
-This constructor takes a path to a triangle mesh stored as a `.obj` file and builds a patch-based internal representation optimized for GPU execution.
+This constructor takes a path to a triangle mesh stored as a `.obj` file and builds the internal data structure optimized for GPU execution.
 
 - `obj_file_path`: Path to the input .obj mesh file.
 
-- `patcher_file`: Optional. If provided, RXMesh will use the patch layout stored in this file instead of generating new patches.
+- `patcher_file`: Optional. If provided, RXMesh will use the patch layout stored in this file instead of generating new patches. This is useful when you want deterministic patching behavior across runs (see the determinism section below).
 
 - `patch_size`: Controls the target average number of faces per patch. The default is 512.
 
@@ -40,7 +40,7 @@ RXMeshStatic(std::vector<std::vector<uint32_t>>& fv,
              const uint32_t    patch_size   = 512);
 ```
 
-This constructor builds the mesh from an in-memory face list, where each face is represented by a vector of three vertex indices.
+This constructor builds the mesh from an in-memory face list where each face is represented by a vector of three vertex indices.
 
 - `fv`: Face list. Each entry contains the three vertex indices for one triangle.
 
