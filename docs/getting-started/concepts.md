@@ -1,20 +1,20 @@
 # **Key Concepts**
 
-This page introduces the core ideas behind RXMesh. Understanding these concepts will make the rest of the documentation much easier to follow.
+This page introduces the core ideas behind RXMesh system. Understanding these concepts will make the rest of the documentation much easier to follow.
 
 ---
 
 ## **Patches**
 
-RXMesh does not store the mesh as a single monolithic array. Instead, during construction, the input mesh is **partitioned into patches**—small, local subsets of the mesh that fit into GPU shared memory. Each patch contains a group of vertices, edges, and faces along with their local connectivity.
+RXMesh does not store the mesh as a single monolithic array. Instead, during construction, the input mesh is **partitioned into patches**. A patch is a small subset connected mesh faces that fit into GPU shared memory. Each patch contains a group of vertices, edges, and faces along with their local connectivity.
 
-This patch-based design is central to RXMesh's performance. By keeping patches small enough to reside in shared memory, neighborhood queries can be answered without accessing global memory. Users generally do not interact with patches directly—RXMesh manages partitioning, locality, and load balancing internally. However, patches influence how [indexing](../rxmesh/indexing.md) works and explain why RXMesh uses **handles** rather than raw integer indices.
+This patch-based design is central to RXMesh's performance. By keeping patches small enough to reside in shared memory, neighborhood queries can be answered without accessing global memory. Users generally do not interact with patches directly, i.e., RXMesh manages partitioning, locality, and load balancing internally. However, patches influence how [indexing](../rxmesh/indexing.md) works and explain why RXMesh uses **handles** rather than raw integer indices.
 
 ---
 
 ## **Handles**
 
-Every mesh element (vertex, edge, or face) is identified by a **handle**—a lightweight 64-bit identifier that encodes both the **patch ID** and the element's **local index** within that patch.
+Every mesh element (vertex, edge, or face) is identified by a **handle**, i.e., a 64-bit identifier that encodes both the **patch ID** and the element's **local index** within that patch.
 
 RXMesh defines three handle types:
 
@@ -43,11 +43,11 @@ For the full handle API, see the [Handles](../rxmesh/handles.md) reference.
 
 An **attribute** is a typed array of values attached to mesh elements. For example:
 
-- A 3D position per vertex (`VertexAttribute<float>` with 3 components)
-- A scalar curvature per edge (`EdgeAttribute<float>` with 1 component)
-- A label per face (`FaceAttribute<int>` with 1 component)
+- A per-vertex 3D position (`VertexAttribute<float>` with 3 components)
+- A per-edge scalar edge length (`EdgeAttribute<float>` with 1 component)
+- A per-face scalar face area (`FaceAttribute<int>` with 1 component)
 
-Attributes are **strongly typed**—a `VertexAttribute` can only be indexed with a `VertexHandle`, preventing accidental misuse.
+Attributes are **strongly typed**, i.e., a `VertexAttribute` can only be indexed with a `VertexHandle`, preventing accidental misuse.
 
 Attributes can reside on the **host** (CPU), **device** (GPU), or **both**, and you explicitly control data movement between them:
 
@@ -81,7 +81,7 @@ This runs a parallel loop over all vertices (or edges, or faces). See [`for_each
 
 ### Query Kernels (`run_query_kernel`)
 
-Use a query kernel when you need to access **neighboring elements**—for example, the vertices of a face or the one-ring neighbors of a vertex. Queries are specified using the `Op` enum:
+Use a query kernel when you need to access **neighboring elements**, for example, the vertices of a face or the one-ring neighbors of a vertex. Queries are specified using the `Op` enum:
 
 | Op      | Meaning                                |
 |---------|----------------------------------------|
@@ -99,7 +99,7 @@ A query kernel receives the input element's handle and an **iterator** over the 
 
 ```cpp
 rx.run_query_kernel<Op::FV, 256>(
-    [=] __device__(FaceHandle fh, VertexIterator& fv) mutable {
+    [=] __device__(FaceHandle fh, VertexIterator& fv) {
         // fv[0], fv[1], fv[2] are the three vertex handles
         auto p0 = coords.to_glm<3>(fv[0]);
         auto p1 = coords.to_glm<3>(fv[1]);
@@ -115,8 +115,8 @@ See [Query Kernels](../rxmesh/run_query_kernel.md) for the full API and query ta
 
 RXMesh is designed for GPU execution. The two key locations for data are:
 
-- **`HOST`** — CPU memory. Used for I/O, visualization, debugging.
-- **`DEVICE`** — GPU memory. Used for computation.
+- **`HOST`**: CPU memory. Used for I/O, visualization, debugging.
+- **`DEVICE`**: GPU memory. Used for computation.
 
 Most computation in RXMesh happens on the device. Lambdas passed to `for_each` or query kernels must be annotated with `__device__` and must capture data by value (not by reference). After computation, results are typically moved back to the host for output or visualization:
 
@@ -128,12 +128,12 @@ attribute.move(DEVICE, HOST);
 
 ## **Putting It Together**
 
-A typical RXMesh workflow looks like this:
+The most basic workflow in RXMesh looks like this:
 
 1. **Initialize** RXMesh and load a mesh → `RXMeshStatic rx("mesh.obj")`
 2. **Create attributes** to store data on mesh elements → `rx.add_vertex_attribute<float>(...)`
-3. **Run computations** using `for_each` or query kernels
+3. **Run computations** using `for_each` or `run_query_kernel`.  
 4. **Move results** to the host if needed → `attr.move(DEVICE, HOST)`
-5. **Visualize or export** → Polyscope, OBJ, VTK
+5. **Visualize or export** → Polyscope
 
-For the complete API, continue to [Static Mesh Processing](../rxmesh/static.md).
+For the complete API, continue to [Static Mesh Processing](../rxmesh/static.md).  Step 3 can also become more advanced, e.g., solving linear systems with [Matrices & Solvers](../rxmesh/solvers.md), performing [dynamic mesh operations](../rxmesh/dynamic.md) that change connectivity, or computing derivatives with [automatic differentiation](../rxmesh/ad.md) for non-linear optimization.
