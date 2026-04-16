@@ -44,7 +44,7 @@ nav:
     - Overview: rxmesh/static.md
     - Initialization: rxmesh/initialization.md
     - Attributes:
-      - Managing Attributes: rxmesh/attributes_management.md
+      - Managing Attributes: rxmesh/managing_attributes.md
       - Working with Attributes: rxmesh/attributes.md
     - Operations:
       - for_each: rxmesh/for_each.md

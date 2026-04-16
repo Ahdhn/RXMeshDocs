@@ -71,5 +71,5 @@ rx.run_query_kernel<Op::EV, blockSize>(
 });
 ```
 
-> See [Attribute Management](attributes_management.md) to learn how to create and manipulate attributes like `len`.
+> See [Managing Attributes](managing_attributes.md) to learn how to create and manipulate attributes like `len`.
 

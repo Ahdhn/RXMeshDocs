@@ -59,7 +59,7 @@ auto color = *rx.add_vertex_attribute<float>("vColor", 3);
 color.move(DEVICE, HOST);  // bring results back to CPU
 ```
 
-Attributes are covered in detail under [Managing Attributes](../rxmesh/attributes_management.md) (creating, checking, removing) and [Working with Attributes](../rxmesh/attributes.md) (accessing values, memory movement, Eigen/GLM interop).
+Attributes are covered in detail under [Managing Attributes](../rxmesh/managing_attributes.md) (creating, checking, removing) and [Working with Attributes](../rxmesh/attributes.md) (accessing values, memory movement, Eigen/GLM interop).
 
 ---
 

@@ -1,7 +1,7 @@
 # **Attributes** 
 
 
-Attributes are used to manage and manipulate data associated with mesh elements (vertices, edges, faces). To allocate attributes, see [Attributes Management](attributes_management.md). This section covers how to use attributes after allocation and what operations are available.
+Attributes are used to manage and manipulate data associated with mesh elements (vertices, edges, faces). To allocate attributes, see [Managing Attributes](managing_attributes.md). This section covers how to use attributes after allocation and what operations are available.
 
 Each attribute is defined by:
 

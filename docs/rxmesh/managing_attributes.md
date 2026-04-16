@@ -1,4 +1,4 @@
-# **Attributes Management**
+# **Managing Attributes**
 
 This section explains how to define, check, and remove attributes in `RXMeshStatic`. Attributes in RXMesh are strongly typed and always associated with a specific mesh element (vertex, edge, or face). You can create attributes from scratch, load them from data in memory, or copy the shape and layout from an existing attribute.
 
