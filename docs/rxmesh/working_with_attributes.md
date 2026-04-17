@@ -1,6 +1,6 @@
 # **Working with Attributes**
 
-This section covers how to work with an attribute after allocation: query metadata, move/copy memory, and read/write values. To create or remove attributes, see [Managing Attributes](managing_attributes.md).
+This section focuses on what you usually do after creating an attribute, i.e., read/write values, reset data, move data between host/device, and copy from another attribute. To create or remove attributes, see [Managing Attributes](managing_attributes.md).
 
 An RXMesh attribute is defined by:
 
@@ -9,142 +9,191 @@ An RXMesh attribute is defined by:
 - **Number of components per element**: for example 3 for RGB or XYZ
 
 ```cpp
-auto color = rx.add_vertex_attribute<float>("vColor", 3);  // RGB per vertex
+auto color = *rx.add_vertex_attribute<float>("vColor", 3);  // RGB per vertex
 ```
 
 The memory layout can be Struct of Arrays (SoA, default) or Array of Structs (AoS). SoA is usually preferred for GPU-friendly access patterns.
 
 ---
 
-## **Per-Attribute Operations**
+## **Core Workflow**
 
-Per-attribute operations apply to all entries in the attribute (not a single element).
+Most day-to-day code touches four APIs, i.e., `operator()` for per-element access, `reset(...)` to overwrite all entries, `move(...)` to transfer/ensure location, and `copy_from(...)` to copy values from another attribute.
 
-```cpp
-auto normals = rx.add_vertex_attribute<float>("vNormal", 3);
-
-// Query shape and metadata
-auto rows = normals->rows();
-auto cols = normals->cols();
-auto nattr = normals->get_num_attributes();
-
-// Manage locations
-normals->move(HOST, DEVICE);
-normals->reset(0.0f, DEVICE);
-```
-
-Dimension semantics:
-
-- `rows()` is the number of mesh elements represented by the attribute
-- `cols()` is the number of components per element
-- `get_num_attributes()` reports the same component count as `cols()`
-- `size()` is the number of mesh elements (same concept as `rows()`, not `rows() * cols()`)
-
-??? note "`get_name() const`"
-    Returns the attribute name string used when the attribute was created.
-
-??? note "`rows() const`"
-    Returns the number of mesh elements represented by this attribute.
-
-??? note "`cols() const`"
-    Returns the number of components per mesh element.
-
-??? note "`get_num_attributes() const`"
-    Returns the number of per-element components (equivalent concept to `cols()`).
-
-??? note "`size() const`"
-    Returns the number of mesh elements (equivalent concept to `rows()`).
-
-??? note "`get_layout() const`"
-    Returns the memory layout (`SoA` or `AoS`) used by the attribute.
-
-??? note "`get_allocated() const`"
-    Returns where data is currently allocated (`HOST`, `DEVICE`, or both).
-
-??? note "`is_host_allocated() const`"
-    Returns `true` if host memory is currently allocated.
-
-??? note "`is_device_allocated() const`"
-    Returns `true` if device memory is currently allocated.
-
-??? note "`is_empty() const`"
-    Returns `true` if the attribute currently has no allocated storage.
-
-??? note "`to_matrix()`"
-    Converts attribute data to a host-side dense matrix representation.
-
-??? note "`from_matrix(mat)`"
-    Loads values from a host-side dense matrix into the attribute.
-
----
-
-## **Element-Wise Access**
-
-Use these APIs to read or write one element (or one component of an element) at a time.
+Read or write one component with `operator()`:
 
 ```cpp
 VertexHandle vh = ...;
 
-// Index-based access
-float x = (*color)(10, 0);
-
-// Handle-based access
-(*color)(vh, 1) = 0.5f;
-
-// Vector interop
-auto n = color->to_glm<3>(vh);
-color->from_eigen<3>(vh, eigen_n);
+float red = color(vh, 0);   // Handle-based read
+color(10, 1) = 0.25f;       // Index-based write (element 10, component 1)
 ```
 
-??? note "`operator()(size_t i, size_t j = 0)`"
-    Accesses the `j`-th component of the `i`-th mesh element.
-
 ??? note "`operator()(HandleT handle, uint32_t attr = 0)`"
-    Accesses the `attr`-th component of a specific element using its handle.
+    Accesses the `attr`-th component of one element via its mesh handle.
 
-??? note "`to_glm<N>(handle)` / `from_glm<N>(handle, value)`"
-    Converts between attribute components and GLM vector types for one element.
+??? note "`operator()(size_t i, size_t j = 0)`"
+    Accesses the `j`-th component of the `i`-th mesh element by index.
 
-??? note "`to_eigen<N>(handle)` / `from_eigen<N>(handle, value)`"
-    Converts between attribute components and Eigen vectors for one element.
-
-`N` must match the per-element component count (for example, `N = 3` for RGB or XYZ).
-
----
-
-## **Memory and Lifecycle**
-
-These APIs control where data lives and how it is copied or cleared.
+Reset all values:
 
 ```cpp
-// Reset on device asynchronously on stream s
 cudaStream_t s = ...;
-attr->reset(0.0f, DEVICE, s);
-
-// Ensure host copy exists
-attr->move(DEVICE, HOST, s);
-
-// Copy from another attribute
-dst->copy_from(src, LOCATION_ALL, LOCATION_ALL, s);
+color->reset(0.0f, DEVICE, s);   // Asynchronous device fill on stream s
+color->reset(1.0f, HOST);        // Synchronous host fill
 ```
 
 ??? note "`reset(value, location = LOCATION_ALL, stream = NULL)`"
-    Fills all entries with `value` in the requested `location` (`HOST`, `DEVICE`, or both). If a CUDA stream is provided, device work is enqueued on that stream.
+    Fills all entries with `value` in `HOST`, `DEVICE`, or both. If a CUDA stream is provided, device work is enqueued on that stream.
+
+Move data to from device to host (or vice verse):
+
+```cpp
+cudaStream_t s = ...;
+color->move(HOST, DEVICE, s);  // Upload for a GPU kernel
+color->move(DEVICE, HOST, s);  // Bring results back to host
+```
 
 ??? note "`move(source, target, stream = NULL)`"
-    Moves data from `source` to `target` location. If target storage is missing, it is allocated first. When a stream is provided, device transfers run on that stream.
+    Moves data from `source` location to `target` location. Missing target storage is allocated first.
+
+Copy values from a compatible attribute:
+
+```cpp
+auto src = rx.add_vertex_attribute<float>("vColor_src", 3);
+auto dst = rx.add_vertex_attribute<float>("vColor_dst", 3);
+
+cudaStream_t s = ...;
+dst->copy_from(src, LOCATION_ALL, LOCATION_ALL, s);
+```
 
 ??? note "`copy_from(source, source_flag = LOCATION_ALL, dst_flag = LOCATION_ALL, stream = NULL)`"
-    Deep-copies from `source` into this attribute, filtered by source and destination location flags. With `LOCATION_ALL`, RXMesh copies host-to-host and device-to-device where available; stream controls device-side copy scheduling.
-
-??? note "`release(location = LOCATION_ALL)`"
-    Releases allocated storage in the requested location(s). Use `LOCATION_ALL` to free both host and device allocations.
+    Deep-copies from `source` into this attribute, with optional source/destination location filtering.
 
 ---
 
-## **Practical Notes**
+## **Element-Wise Access Patterns**
 
-- Prefer handle-based access inside mesh algorithms, and index-based access for linear host-side loops.
-- Use `to_matrix()` / `from_matrix()` for batch host workflows (analysis, serialization, or interop).
-- Pick SoA for most GPU kernels; consider AoS only when your access pattern benefits from packed per-element structs.
-- Some low-level overloads and patch-local indexing utilities exist for advanced/internal usage; most users should rely on the APIs documented here.
+Use **index-based access** for direct host-side loops over compact indices. Use **handle-based access** inside mesh algorithms and kernels where handles are the natural key.
+
+```cpp
+// Mesh-algorithm style
+VertexHandle vh = ...;
+color(vh, 0) = 0.8f;
+
+// Host-side index loop style
+for (size_t i = 0; i < color->size(); ++i) {
+    color(i, 2) = 1.0f;
+}
+```
+
+Because `size()` reports element count, loops over `i = 0..size()-1` iterate mesh elements (not component slots).
+
+---
+
+## **Vector / Linear-Algebra Interop**
+
+When you need local geometry math, convert per-element components to vectors, compute, then write back.
+
+Example: compute one face normal from three vertex positions using Eigen:
+
+```cpp
+auto position = *rx.get_input_vertex_coordinates();  // VertexAttribute<rx_coord_t>, 3 comps
+auto face_normal = *rx.add_face_attribute<float>("fNormal", 3);
+
+//inside GPU kernel 
+FaceHandle fh = ...;
+VertexHandle v0 = ...;  // first vertex of face fh
+VertexHandle v1 = ...;  // second vertex
+VertexHandle v2 = ...;  // third vertex
+
+Eigen::Vector3f p0 = position->to_eigen<3>(v0).cast<float>();
+Eigen::Vector3f p1 = position->to_eigen<3>(v1).cast<float>();
+Eigen::Vector3f p2 = position->to_eigen<3>(v2).cast<float>();
+
+Eigen::Vector3f e0 = p1 - p0;
+Eigen::Vector3f e1 = p2 - p0;
+Eigen::Vector3f n = e0.cross(e1).normalized();
+face_normal.from_eigen<3>(fh, n);
+```
+
+??? note "`to_eigen<N>(handle)` / `from_eigen<N>(handle, value)`"
+    Converts between one attribute element and an Eigen vector type. `N` must match the attribute component count.
+
+Equivalent GLM flow:
+
+```cpp
+glm::vec3 p0 = position->to_glm<3>(v0);
+glm::vec3 p1 = position->to_glm<3>(v1);
+glm::vec3 p2 = position->to_glm<3>(v2);
+
+glm::vec3 n = glm::normalize(glm::cross(p1 - p0, p2 - p0));
+face_normal->from_glm<3>(fh, n);
+```
+
+??? note "`to_glm<N>(handle)` / `from_glm<N>(handle, value)`"
+    Converts between one attribute element and a GLM vector type. `N` must match the attribute component count.
+
+Matrix conversion utilities that convert the attribute to/from a [dense matrix](../rxmesh/dense_matrices.md):
+
+```cpp
+auto mat = face_normal->to_matrix();
+face_normal->from_matrix(mat);
+```
+
+??? note "`to_matrix()` / `from_matrix(mat)`"
+    Converts an attribute to/from a dense matrix representation.
+
+---
+
+## **Metadata and Lifecycle Reference**
+
+Use these APIs when you need to inspect shape/layout/allocation or release memory.
+
+Correct shape semantics:
+
+- `rows()` = number of mesh elements represented by the attribute
+- `size()` = number of mesh elements (same concept as `rows()`, **not** `rows() * cols()`)
+- `cols()` = number of components per element
+- `get_num_attributes()` = per-element component count (same concept as `cols()`)
+
+```cpp
+auto n_elements = attr->size();
+auto n_rows = attr->rows();
+auto n_components = attr->cols();
+auto n_attributes = attr->get_num_attributes();
+```
+
+??? note "`get_name() const`"
+    Returns the attribute name used at creation time.
+
+??? note "`rows() const`, `cols() const`, `size() const`, `get_num_attributes() const`"
+    Reports shape information using the semantics described above.
+
+Layout, footprint, and allocation checks:
+
+```cpp
+auto layout = attr->get_layout();
+auto bytes = attr->get_total_bytes();
+bool on_host = attr->is_host_allocated();
+bool on_device = attr->is_device_allocated();
+bool empty = attr->is_empty();
+```
+
+??? note "`get_layout() const`"
+    Returns the memory layout (`SoA` or `AoS`) used by the attribute.
+
+??? note "`get_total_bytes() const`"
+    Returns the total allocated byte footprint for this attribute.
+
+??? note "`get_allocated() const`, `is_host_allocated() const`, `is_device_allocated() const`, `is_empty() const`"
+    Reports allocation state on host/device.
+
+Release storage when you no longer need the data:
+
+```cpp
+attr->release(LOCATION_ALL);  // Free host and device storage
+```
+
+??? note "`release(location = LOCATION_ALL)`"
+    Releases allocated storage in the requested location(s).
