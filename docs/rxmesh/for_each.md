@@ -1,51 +1,40 @@
-# **`for_each` **
+# **`for_each`**
 
-RXMesh provides four `for_each` functions that apply a user-defined lambda function over all mesh elements of a given type: vertices, edges, or faces. These operations are embarrassingly parallel—they do not rely on connectivity or neighbor traversal.
+RXMesh provides `for_each` functions that apply a user-defined callable to mesh elements of a given type—vertices, edges, or faces. Each element is identified by a [handle](handles.md). These traversals are embarrassingly parallel and do __not__ rely on connectivity or neighbor traversal. When your logic needs adjacent elements (for example, a face’s vertices), use [`run_query_kernel`](run_query_kernel.md) instead.
 
-You can run them on the host (parallelized with OpenMP) or the device (as CUDA kernels). The lambda must accept a mesh element [handle](handles.md) (e.g., VertexHandle) and be annotated with `__device__` if executed on the GPU. For GPU execution, all data captures must be by value. More about lambda function in CUDA can be found [here](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#extended-lambda).
-
----
-## **Functions**
-- `for_each_vertex(location, lambda, stream, with_omp)`
-
-- `for_each_edge(location, lambda, stream, with_omp)`
-
-- `for_each_face(location, lambda, stream, with_omp)`
-
-- `for_each<HandleT>(location, lambda, stream, with_omp)` — generic version
-
----
-
-## **Usage**
-
-- `location`: one of `HOST` or `DEVICE`
-- `lambda`: must match the handle type (e.g., `const FaceHandle fh`).
-- `stream`: only used when running on the GPU.
-- `with_omp`: only relevant when executing on the host; defaults to true.
-
----
-## **Example: Per-Vertex Coloring**
-```c++
+```cpp
 RXMeshStatic rx("mesh.obj");
 auto vertex_pos = rx.get_input_vertex_coordinates();
 auto vertex_color = rx.add_vertex_attribute<float>("vColor", 3, DEVICE);
 
 rx.for_each_vertex(
     DEVICE,
-    [vertex_color, vertex_pos] __device__ (const VertexHandle vh) {
-        vertex_color(vh, 0) = 0.9;
+    [vertex_color, vertex_pos] __device__(const VertexHandle vh) {
+        vertex_color(vh, 0) = 0.9f;
         vertex_color(vh, 1) = vertex_pos(vh, 1);
-        vertex_color(vh, 2) = 0.9;
-});
+        vertex_color(vh, 2) = 0.9f;
+    });
 ```
 
----
-## **When to Use**
+??? note "`for_each_vertex(location, apply, stream = NULL, with_omp = true) const`"    
+    Applies `apply` to each visited vertex; `apply` should take a `VertexHandle`. `location` is a bitmask of host/device execution sites. `stream` is the CUDA stream when device execution is requested. `with_omp` enables OpenMP for host execution (default `true`); it is ignored when only the device path runs.
 
-Use `for_each` when:
+??? note "`for_each_edge(location, apply, stream = NULL, with_omp = true) const`"    
+    Same as `for_each_vertex`, but `apply` receives an `EdgeHandle`.
 
-- You want to apply a function per element.
-- The function does **not** require access to adjacent elements.
-- The logic can be done independently per vertex, edge, or face.
+??? note "`for_each_face(location, apply, stream = NULL, with_omp = true) const`"    
+    Same as `for_each_vertex`, but `apply` receives a `FaceHandle`.
 
-If you do need access to neighbor elements (e.g., face's vertices), use `run_query_kernel`.
+??? note "`for_each<HandleT>(location, apply, stream = NULL, with_omp = true)`"    
+    Dispatches to `for_each_vertex`, `for_each_edge`, or `for_each_face` according to `HandleT`. `HandleT` must be `VertexHandle`, `EdgeHandle`, or `FaceHandle`.
+
+### **CUDA lambdas**
+
+For **`DEVICE`** execution, `apply` must satisfy RXMesh’s compile-time checks for a device callable (for example a `__device__` or `__host__ __device__` extended lambda, as recognized by RXMesh’s traits). Captures used on the device must be valid in device code (typically **by-value** captures).
+
+For **`HOST`**-only execution, an ordinary host callable is sufficient.
+
+More background: [CUDA C++ Programming Guide — extended lambdas](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#extended-lambda).
+
+??? info "Device launch shape"
+    On the device path, `RXMeshStatic` launches one block per patch (`grid.x = num_patches`) with **256** threads per block, **0** bytes of dynamic shared memory, on `stream`.

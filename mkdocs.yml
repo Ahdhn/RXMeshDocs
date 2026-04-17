@@ -67,6 +67,7 @@ nav:
   - Reference:
     - Handles: rxmesh/handles.md
     - Iterators: rxmesh/iterators.md
+    - LocationT: rxmesh/location_t.md
     - Query Object: rxmesh/query.md
     - LaunchBox: rxmesh/launch_box.md
     - ShmemAllocator: rxmesh/shmem_allocator.md
