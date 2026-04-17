@@ -2,11 +2,13 @@
 
 This section explains how to define, check, and remove attributes in `RXMeshStatic`. Attributes in RXMesh are strongly typed and always associated with a specific mesh element (vertex, edge, or face). You can create attributes from scratch, load them from data in memory, or copy the shape and layout from an existing attribute.
 
-> For manipulating attribute values—access, memory movement, or math—see the [Attributes](attributes.md) section.
+> For manipulating attribute values, i.e., access, memory movement, or math, see the [Attributes](attributes.md) section.
 
 ---
 
 ## **Adding Attributes**
+
+Attribute names must be unique across all vertex, edge, and face attributes in the same `RXMeshStatic` instance.
 
 ### From Scratch
 
@@ -18,12 +20,17 @@ rx.add_edge_attribute<int>("eFlags", 1);       // One integer flag per edge
 rx.add_face_attribute<double>("area", 1);      // Scalar per face
 ```
 
-Relevant functions:
+??? note "`add_vertex_attribute<T>(name, num_attributes, location, layout)`"    
+    Allocates a new vertex attribute with `num_attributes` components per vertex. `location` selects host, device, or both; `layout` is SoA or AoS.
 
-- `add_vertex_attribute<T>(name, num_attributes, location, layout)`
-- `add_edge_attribute<T>(...)`
-- `add_face_attribute<T>(...)`
-- `add_attribute<T, HandleT>(...)` — generic version that uses the handle type.
+??? note "`add_edge_attribute<T>(name, num_attributes, location, layout)`"    
+    Same as the vertex variant, but storage is indexed by edges.
+
+??? note "`add_face_attribute<T>(name, num_attributes, location, layout)`"
+    Same as the vertex variant, but storage is indexed by faces.
+
+??? note "`add_attribute<T, HandleT>(...)`"
+    Generic overload: `HandleT` is `VertexHandle`, `EdgeHandle`, or `FaceHandle`, which selects the element type.
 
 ---
 
@@ -41,12 +48,17 @@ std::vector<int> face_labels = ...;
 rx.add_face_attribute(face_labels, "fLabels");
 ```
 
-Functions:
+??? note "`add_vertex_attribute<T>(std::vector<std::vector<T>>, name, layout)`"
+    Load per-vertex data from a nested vector: one inner vector per vertex (e.g., 3D positions). `layout` controls SoA vs AoS.
 
-- `add_vertex_attribute<T>(std::vector<std::vector<T>>, name, layout)`
-- `add_face_attribute<T>(std::vector<std::vector<T>>, name, layout)`
-- `add_vertex_attribute<T>(std::vector<T>, name, layout)`
-- `add_face_attribute<T>(std::vector<T>, name, layout)`
+??? note "`add_face_attribute<T>(std::vector<std::vector<T>>, name, layout)`"
+    Load per-face data from a nested vector: one inner vector per face.
+
+??? note "`add_vertex_attribute<T>(std::vector<T>, name, layout)`"
+    Load a flat scalar per vertex (one value per vertex index).
+
+??? note "`add_face_attribute<T>(std::vector<T>, name, layout)`"
+    Load a flat scalar per face (one value per face index).
 
 These methods copy the input data to both host and device and allocate storage accordingly.
 
@@ -60,13 +72,43 @@ Used when you want to allocate an attribute that has the same layout, memory loc
 auto new_color = rx.add_vertex_attribute_like<float>("vColor2", old_color);
 ```
 
-Functions:
+??? note "`add_vertex_attribute_like<T>(name, other)`"
+    Allocate a new vertex attribute with the same shape, layout, and locations as `other`.
 
-- `add_vertex_attribute_like<T>(name, other)`
-- `add_edge_attribute_like<T>(...)`
-- `add_face_attribute_like<T>(...)`
-- `add_attribute_like<T, HandleT>(...)` — type inferred from `HandleT`
+??? note "`add_edge_attribute_like<T>(name, other)`"
+    Same as the vertex variant, but for edge attributes.
 
+??? note "`add_face_attribute_like<T>(name, other)`"
+    Same as the vertex variant, but for face attributes.
+
+??? note "`add_attribute_like<T, HandleT>(name, other)`"
+    Generic version: `HandleT` determines the element type; `other` supplies the template for shape and layout.
+
+---
+
+## **Built-in Attributes**
+
+In addition to user-created attributes, `RXMeshStatic` also provides built-in mesh attributes.
+
+??? note "`get_input_vertex_coordinates()`"
+    Returns `std::shared_ptr<VertexAttribute<rx_coord_t>>` containing the input vertex coordinates.
+
+When the input is provided as multiple meshes, RXMesh assigns a region index to each input mesh. Region label attributes store this index on faces, edges, and vertices, so you can track which original mesh component each element belongs to.
+
+??? note "`get_face_region_label()`"
+    Returns `std::shared_ptr<FaceAttribute<int>>` for per-face region labels.
+
+??? note "`get_edge_region_label()`"
+    Returns `std::shared_ptr<EdgeAttribute<int>>` for per-edge region labels.
+
+??? note "`get_vertex_region_label()`"
+    Returns `std::shared_ptr<VertexAttribute<int>>` for per-vertex region labels.
+
+??? note "`get_region_label<HandleT>()`"
+    Generic region-label accessor. `HandleT` can be `VertexHandle`, `EdgeHandle`, or `FaceHandle`.
+
+??? note "`get_num_regions() const`"
+    Returns the number of regions represented by the built-in label attributes.
 ---
 
 ## **Checking for Existence**
@@ -79,9 +121,8 @@ if (rx.does_attribute_exist("vColor")) {
 }
 ```
 
-Function:
-
-- `does_attribute_exist(name)`
+??? note "`does_attribute_exist(name)`"
+    Returns `true` if an attribute with the given `name` is registered on the mesh.
 
 ---
 
@@ -93,6 +134,5 @@ To delete an attribute from RXMesh and release its memory:
 rx.remove_attribute("vColor");
 ```
 
-Function:
-
-- `remove_attribute(name)`
+??? note "`remove_attribute(name)`"
+    Removes the attribute named `name` from RXMesh and releases its storage.
