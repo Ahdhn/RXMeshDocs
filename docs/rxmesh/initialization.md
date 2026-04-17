@@ -1,6 +1,6 @@
 # **Initialization**
 
-`RXMeshStatic` can be constructed in two ways, depending on whether the input mesh is stored in a file or directly provided as face connectivity and vertex coordinates in memory.
+`RXMeshStatic` can be constructed in three ways, depending on whether the input mesh is stored in one `.obj` file, multiple `.obj` files, or directly provided as face connectivity and vertex coordinates in memory.
 
 ---
 
@@ -32,6 +32,22 @@ rx.save("patches.rx");
 You can then pass `patches.rx` as the `patcher_file` argument in subsequent constructions.
 
 --- 
+
+## **From multiple `.obj` files**
+
+```cpp
+RXMeshStatic(const std::vector<std::string> files_path,
+             const uint32_t                 patch_size = 512);
+```
+
+This constructor loads and merges multiple `.obj` files into one RXMesh instance.
+
+- `files_path`: List of input `.obj` file paths.
+- `patch_size`: Controls the target average number of faces per patch. The default is 512.
+
+When using multiple input meshes, RXMesh also tracks region information (one region index per input mesh), which you can access through built-in region-label attributes described in [Managing Attributes](managing_attributes.md#built-in-attributes).
+
+---
 
 ## **From memory**
 ```cpp
