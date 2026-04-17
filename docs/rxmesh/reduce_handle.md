@@ -1,6 +1,6 @@
 # **Reduction**
 
-RXMesh provides a set of efficient [reduction operations](https://en.wikipedia.org/wiki/Reduction_operator) on mesh attributes. These operations are essential in many geometry processing and simulation pipelines—for example, to compute energy terms, find maximum curvature, or calculate norms. Reductions in RXMesh are built on top of [CUB](https://docs.nvidia.com/cuda/cub/index.html), NVIDIA’s high-performance library for parallel primitives. All reductions operate over [Attributes](attributes.md), and the results are returned on the host.
+RXMesh provides a set of efficient [reduction operations](https://en.wikipedia.org/wiki/Reduction_operator) on mesh attributes. These operations are essential in many geometry processing and simulation pipelines—for example, to compute energy terms, find maximum curvature, or calculate norms. Reductions in RXMesh are built on top of [CUB](https://docs.nvidia.com/cuda/cub/index.html), NVIDIA’s high-performance library for parallel primitives. All reductions operate over [Attributes](working_with_attributes.md), and the results are returned on the host.
 
 To perform reductions, use the `ReduceHandle` class. It encapsulates memory management and provides an interface for common operations like sum, dot product, L2 norm, and more.
 

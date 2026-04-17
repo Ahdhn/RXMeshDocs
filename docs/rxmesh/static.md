@@ -5,7 +5,7 @@
 During construction, `RXMeshStatic` parses the input mesh (from an `.obj` file or in-memory face list) and builds a compact, [patch-based](../getting-started/concepts.md#patches) GPU data structure optimized for parallel execution. Once constructed, it exposes the full API for mesh processing:
 
 - **[Initialization](initialization.md)**: Constructors, patching options, and how to provide vertex coordinates.
-- **Attributes**: Define typed per-element data. See [Managing Attributes](managing_attributes.md) for allocation and [Working with Attributes](attributes.md) for access and manipulation.
+- **Attributes**: Define typed per-element data. See [Managing Attributes](managing_attributes.md) for allocation and [Working with Attributes](working_with_attributes.md) for access and manipulation.
 - **Operations**: Run parallel computations over mesh elements:
     - [`for_each`](for_each.md): Apply a lambda per vertex, edge, or face (no neighbor access).
     - [Query Kernels](run_query_kernel.md): Access local neighborhoods (e.g., face vertices, vertex one-ring).

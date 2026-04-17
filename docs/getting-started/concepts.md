@@ -24,7 +24,7 @@ RXMesh defines three handle types:
 | `EdgeHandle`   | An edge    |
 | `FaceHandle`   | A face     |
 
-Handles are the primary way to refer to mesh elements throughout the API. You use them to read and write [attributes](../rxmesh/attributes.md), and they are passed into lambdas by [`for_each`](../rxmesh/for_each.md) and [query kernels](../rxmesh/run_query_kernel.md).
+Handles are the primary way to refer to mesh elements throughout the API. You use them to read and write [attributes](../rxmesh/working_with_attributes.md), and they are passed into lambdas by [`for_each`](../rxmesh/for_each.md) and [query kernels](../rxmesh/run_query_kernel.md).
 
 ```cpp
 rx.for_each_vertex(
@@ -59,7 +59,7 @@ auto color = *rx.add_vertex_attribute<float>("vColor", 3);
 color.move(DEVICE, HOST);  // bring results back to CPU
 ```
 
-Attributes are covered in detail under [Managing Attributes](../rxmesh/managing_attributes.md) (creating, checking, removing) and [Working with Attributes](../rxmesh/attributes.md) (accessing values, memory movement, Eigen/GLM interop).
+Attributes are covered in detail under [Managing Attributes](../rxmesh/managing_attributes.md) (creating, checking, removing) and [Working with Attributes](../rxmesh/working_with_attributes.md) (accessing values, memory movement, Eigen/GLM interop).
 
 ---
 

@@ -46,7 +46,7 @@ nav:
     - Initialization: rxmesh/initialization.md
     - Attributes:
       - Managing Attributes: rxmesh/managing_attributes.md
-      - Working with Attributes: rxmesh/attributes.md
+      - Working with Attributes: rxmesh/working_with_attributes.md
     - Operations:
       - for_each: rxmesh/for_each.md
       - Query Kernels: rxmesh/run_query_kernel.md
