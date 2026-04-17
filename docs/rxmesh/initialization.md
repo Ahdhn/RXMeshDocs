@@ -6,19 +6,18 @@
 
 ## **From an `.obj` File**
 
-```cpp
-RXMeshStatic(const std::string obj_file_path,
-             const std::string patcher_file = "",
-             const uint32_t    patch_size   = 512);
-```
-
 This constructor takes a path to a triangle mesh stored as a `.obj` file and builds the internal data structure optimized for GPU execution.
 
-- `obj_file_path`: Path to the input .obj mesh file.
+??? note "`RXMeshStatic(const std::string file_path, const std::string patcher_file = "", const uint32_t patch_size = 512, const float capacity_factor = 1.0, const float patch_alloc_factor = 1.0, const float lp_hashtable_load_factor = 0.8)`"
+    - `file_path`: Path to the input `.obj` file.
+    - `patcher_file` (optional): Path to a previously saved patch layout (`rx.save(...)`) to restore deterministic patch assignment.
+    - `patch_size` (optional): Target average number of faces per patch (default: `512`).
+  
+    The following parameters are only relevant to `RXMeshDynamic` which inherits from `RXMeshStatic`
 
-- `patcher_file`: Optional. If provided, RXMesh will use the patch layout stored in this file instead of generating new patches. This is useful when you want deterministic patching behavior across runs (see the determinism section below).
-
-- `patch_size`: Controls the target average number of faces per patch. The default is 512.
+    - `capacity_factor` (optional): Extra per-patch storage headroom before slicing/splitting is needed (default: `1.0`). 
+    - `patch_alloc_factor` (optional): Extra global patch allocation headroom beyond the initial k-means patch count (default: `1.0`).
+    - `lp_hashtable_load_factor` (optional): Load factor for the hashtable used for mapping non-owned elements to their owner `(patch_id, local_id)` (default: `0.8`).
 
 ### Patch-Based Construction and Determinism
 RXMesh uses a patch-based decomposition of the mesh to improve data locality and enable efficient parallel processing. By default, this patching process is run at every construction and includes randomness (e.g., random starting points or ordering) which can lead to non-deterministic patch layouts. This does not affect correctness but can make debugging more difficult.
@@ -35,32 +34,30 @@ You can then pass `patches.rx` as the `patcher_file` argument in subsequent cons
 
 ## **From multiple `.obj` files**
 
-```cpp
-RXMeshStatic(const std::vector<std::string> files_path,
-             const uint32_t                 patch_size = 512);
-```
-
 This constructor loads and merges multiple `.obj` files into one RXMesh instance.
 
-- `files_path`: List of input `.obj` file paths.
-- `patch_size`: Controls the target average number of faces per patch. The default is 512.
+??? note "`RXMeshStatic(const std::vector<std::string> files_path, const uint32_t patch_size = 512)`"
+    - `files_path`: List of input `.obj` file paths.
+    - `patch_size` (optional): Target average number of faces per patch (default: `512`).
 
-When using multiple input meshes, RXMesh also tracks region information (one region index per input mesh), which you can access through built-in region-label attributes described in [Managing Attributes](managing_attributes.md#built-in-attributes).
+When using multiple input meshes, RXMesh also tracks region information (one region index per input mesh) which you can access through built-in region-label attributes described in [Managing Attributes](managing_attributes.md#built-in-attributes).
 
 ---
 
 ## **From memory**
-```cpp
-RXMeshStatic(std::vector<std::vector<uint32_t>>& fv,
-             const std::string patcher_file = "",
-             const uint32_t    patch_size   = 512);
-```
 
 This constructor builds the mesh from an in-memory face list where each face is represented by a vector of three vertex indices.
 
-- `fv`: Face list. Each entry contains the three vertex indices for one triangle.
+??? note "`RXMeshStatic(std::vector<std::vector<uint32_t>>& fv, const std::string patcher_file = \"\", const uint32_t patch_size = 512, const float capacity_factor = 1.0, const float patch_alloc_factor = 1.0, const float lp_hashtable_load_factor = 0.8)`"
+    - `fv`: Face list (triangle connectivity). Each entry is a vector of three vertex indices.
+    - `patcher_file` (optional): Path to a previously saved patch layout for deterministic patch assignment.
+    - `patch_size` (optional): Target average number of faces per patch (default: `512`).
+    
+    The following parameters are only relevant to `RXMeshDynamic` which inherits from `RXMeshStatic`
 
-- `patcher_file`, `patch_size`: Same as above.
+    - `capacity_factor` (optional): Extra per-patch storage headroom before slicing/splitting is needed (default: `1.0`).
+    - `patch_alloc_factor` (optional): Extra global patch allocation headroom beyond the initial k-means patch count (default: `1.0`).
+    - `lp_hashtable_load_factor` (optional): Load factor for the hashtable used for mapping non-owned elements to their owner `(patch_id, local_id)` (default: `0.8`).
 
 Note that this constructor only defines the mesh topology (i.e., connectivity). To provide vertex positions, call:
 
@@ -68,5 +65,3 @@ Note that this constructor only defines the mesh topology (i.e., connectivity). 
 rx.add_vertex_coordinates(std::vector<std::vector<float>>& vertex_coords);
 ```
 Here, `vertex_coords[i]` should be a 3-element vector containing the 3D position of vertex `i`.
-
-Both constructors create an internal mesh representation suitable for attribute management, kernel launches, and connectivity queries. The choice between them depends on whether the input mesh is available as a file or already loaded into memory.
