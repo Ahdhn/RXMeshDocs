@@ -56,7 +56,7 @@ More background: [CUDA C++ Programming Guide — extended lambdas](https://docs.
 
 ## **Connectivity-based `for_each`**
 
-These overloads launch a kernel where each thread processes one **seed** mesh element (vertex, edge, or face depending on `Op`) and exposes **neighborhood** connectivity through an [iterator](iterators.md). The iterator type depends on `Op` (for example `Op::FV` yields vertex neighbors of each face).
+These overloads launch a kernel where each thread processes one **seed** mesh element (vertex, edge, or face depending on `Op`) and exposes **neighborhood** connectivity through an [iterator](iterators.md). The iterator type depends on `Op` (for example `Op::FV` yields vertex neighbors of each face). This is only supported on the device. 
 
 The example computes squared edge lengths using `Op::EV`:
 

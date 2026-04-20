@@ -1,186 +1,170 @@
-# **`run_kernel` **
+# **`run_kernel`**
 
-`run_kernel` is a low-level interface that allows you to launch a custom CUDA kernel where part of the logic involves neighborhood-based mesh queries. Unlike [`for_each`](for_each.md), which encapsulates both the query and the computation in a single lambda, `run_kernel` gives you control over the full kernel body. This is useful when:
-
-- You need to perform computation before or after the query operation.
-- You want to cache or reuse data in shared memory.
-- You want to use multiple queries within the same kernel.
-
-There are two categories of `run_kernel` overloads: one where RXMesh computes the launch configuration internally, and one where you provide a pre-computed `LaunchBox`.
+`run_kernel` is a low-level interface for launching a custom CUDA kernel where part of the logic uses neighborhood-based mesh queries. Unlike [`for_each`](for_each.md) which bundle one query `Op` and a single device lambda, `run_kernel` exposes the full kernel body. That is useful when you need work before or after the query, want to reuse shared memory across steps, or need multiple `Op` values in one kernel.
 
 ---
 
-## **Signature (Automatic Launch Configuration)**
+## **`run_kernel` overloads**
 
-```cpp
-template <uint32_t blockSize, typename KernelT, typename... ArgsT>
-void run_kernel(
-    KernelT kernel,
-    const std::vector<Op> op,
-    const bool oriented,
-    const bool with_vertex_valence,
-    const bool is_concurrent,
-    std::function<size_t(uint32_t, uint32_t, uint32_t)> user_shmem,
-    cudaStream_t stream,
-    ArgsT... args)
-```
+### 1) Automatic launch configuration
 
-This overload performs all the setup work. It is the most flexible but also expects more inputs.
+This overload performs `prepare_launch_box` internally. It is the most flexible and takes every configuration knob.
 
-- `op`: A list of one or more query operations to be used inside the kernel. See [Supported query types](for_each.md#supported-query-types).
-- `oriented`: Whether query results need to be sorted.
-- `with_vertex_valence`: Whether to precompute vertex valences and store them in shared memory.
-- `is_concurrent`: Whether the queries will be accessed concurrently in the same kernel body.
-- `user_shmem`: A lambda that returns the amount of extra shared memory (in bytes) required.
-- `args...`: Inputs passed directly to the kernel.
+??? note "`run_kernel(kernel, op, oriented, with_vertex_valence, is_concurrent, user_shmem, stream, args…)`"
+    ```cpp
+    template <uint32_t blockSize, typename KernelT, typename... ArgsT>
+    void run_kernel(
+        KernelT kernel,
+        const std::vector<Op> op,
+        const bool oriented,
+        const bool with_vertex_valence,
+        const bool is_concurrent,
+        std::function<size_t(uint32_t, uint32_t, uint32_t)> user_shmem,
+        cudaStream_t stream,
+        ArgsT... args)
+    ```
+
+    - **`op`**: One or more query operations used inside the kernel. See [Supported query types](for_each.md#supported-query-types).
+    - **`oriented`**: Whether query results must be **oriented** where applicable (meaningful only for certain ops, e.g., `Op::VV` / `Op::VE`).
+    - **`with_vertex_valence`**: Precompute vertex valences and store them in shared memory when needed.
+    - **`is_concurrent`**: When **`op.size() > 1`**, whether multiple queries are accessed **at the same time** in the kernel body.
+    - **`user_shmem`**: Returns **extra** dynamic shared memory (bytes) as a function of patch vertex, edge, and face counts; RXMesh adds its own requirements on top.
+    - **`stream`**: CUDA stream for the launch.
+    - **`args…`**: Arguments forwarded to **`kernel`** after RXMesh’s [`Context`](static.md) (see your kernel signature).
+
+### 2) `LaunchBox` (explicit stream)
+
+Use this when you already called [`prepare_launch_box`](launch_box.md) with the same `op`, kernel pointer, and shared-memory plan, and you want to **reuse** the resulting grid and shared-memory sizes across launches.
+
+??? note "`run_kernel(lb, kernel, stream, args…)`"
+    ```cpp
+    template <uint32_t blockSize, typename KernelT, typename... ArgsT>
+    void run_kernel(
+        const LaunchBox<blockSize>& lb,
+        const KernelT kernel,
+        cudaStream_t stream,
+        ArgsT... args)
+    ```
+
+    Launches **`kernel`** with **`lb.blocks`**, **`lb.num_threads`**, and **`lb.smem_bytes_dyn`** on **`stream`**.
+
+### 3) `LaunchBox` (default stream)
+
+Same as above when the **default** CUDA stream is acceptable.
+
+??? note "`run_kernel(lb, kernel, args…)`"
+    ```cpp
+    template <uint32_t blockSize, typename KernelT, typename... ArgsT>
+    void run_kernel(
+        const LaunchBox<blockSize>& lb,
+        const KernelT kernel,
+        ArgsT... args)
+    ```
+
+### 4) Minimal convenience overload
+
+Skip extra flags when your kernel only needs a simple query list and **default** orientation / concurrency / extra shared memory.
+
+??? note "`run_kernel(op, kernel, args…)`"
+    ```cpp
+    template <uint32_t blockSize, typename KernelT, typename... ArgsT>
+    void run_kernel(
+        const std::vector<Op> op,
+        KernelT kernel,
+        ArgsT... args)
+    ```
+
+    Forwards to the full automatic path with **default** `oriented`, **`is_concurrent`**, and **no** extra user shared memory—only use this when that matches your kernel’s needs.
 
 ---
-## **Signature (With `LaunchBox`)**
+
+## **Writing a custom CUDA kernel**
+
+With `run_kernel`, you author a **`__global__`** function that receives RXMesh’s execution **`Context`** and, inside the block, drives **`Query`** dispatches. The sections below follow one example: accumulate face normals into vertex normals using `Op::FV`.
+
+### Example: computing vertex normal
 
 ```cpp
-template <uint32_t blockSize, typename KernelT, typename... ArgsT>
-void run_kernel(
-    const LaunchBox<blockSize>& lb,
-    const KernelT kernel,
-    cudaStream_t stream,
-    ArgsT... args)
-```
-
-This version assumes you have already initialized a `LaunchBox<blockSize>` using `prepare_launch_box`. This is useful when the same kernel is launched multiple times, as it avoids recomputing the launch configuration.
-
----
-## **Signature (`LaunchBox` + Default Stream)**
-
-```cpp
-template <uint32_t blockSize, typename KernelT, typename... ArgsT>
-void run_kernel(
-    const LaunchBox<blockSize>& lb,
-    const KernelT kernel,
-    ArgsT... args)
-```
-
-Same as above, but runs on the default CUDA stream.
-
----
-
-## **Signature (Minimal Form)**
-
-```cpp
-template <uint32_t blockSize, typename KernelT, typename... ArgsT>
-void run_kernel(
-    const std::vector<Op> op,
-    KernelT kernel,
-    ArgsT... args)
-```
-
-This form skips all optional flags and assumes defaults for `oriented` (i.e., false), `is_concurrent` (i.e., false), and shared memory. Use only if your kernel does not need anything special.
-
-
-In the next section, we will discuss how to write your own query-enabled CUDA kernel to be used with `run_kernel`.
-
----
-
-## **Writing a Custom CUDA Kernel with Query Operations**
-When using `run_kernel`, you need to write your own CUDA kernel. This gives you full control over the execution and allows you to combine query operations with custom computation and shared memory logic. Below is a breakdown of the key components in such a kernel.
-
-### Example: Computing Face Normals
-This example demonstrates how to compute vertex normals by first computing face normals and then distributing them to the vertices of each face. 
-
-```cpp
-template<uint32_t blockSize>
-__global__ void vertex_normal (Context context){      
-    auto compute_vn = [&](const FaceHandle face_id, const VertexIterator& fv) {    	        
-    	const vec3<float> c0 = vertex_pos.to_glm<3>(fv[0]);
+template <uint32_t blockSize>
+__global__ void vertex_normal(Context context)
+{
+    auto compute_vn = [&](const FaceHandle face_id, const VertexIterator& fv) {
+        const vec3<float> c0 = vertex_pos.to_glm<3>(fv[0]);
         const vec3<float> c1 = vertex_pos.to_glm<3>(fv[1]);
         const vec3<float> c2 = vertex_pos.to_glm<3>(fv[2]);
-        
-        glm::fvec3 n = cross(c1 - c0, c2 - c0);
 
+        glm::fvec3 n = cross(c1 - c0, c2 - c0);
         n = glm::normalize(n);
 
-        // add the face's normal to its vertices
-    	for (uint32_t v = 0; v < 3; ++v)       // for every vertex in this face
-            for (uint32_t i = 0; i < 3; ++i)   // for the vertex 3 coordinates
-    		        atomicAdd(&normals(fv[v], i), n[i]); 
-    };  
-  auto block = cooperative_groups::this_thread_block();  
-  Query<blockThreads> query(context);  
-  ShmemAllocator shrd_alloc;
-  query.dispatch<Op::FV>(block, shrd_alloc, compute_vn);
-} 
+        for (uint32_t v = 0; v < 3; ++v)
+            for (uint32_t i = 0; i < 3; ++i)
+                atomicAdd(&normals(fv[v], i), n[i]);
+    };
+
+    auto block = cooperative_groups::this_thread_block();
+    Query<blockSize> query(context);
+    ShmemAllocator shrd_alloc;
+    query.dispatch<Op::FV>(block, shrd_alloc, compute_vn);
+}
 ```
 
-** 1- User-defined computation**
-
-Inside the kernel, the actual logic is defined via a lambda:
+The per-element work is device lambda passed into `dispatch`. For `Op::FV`, the lambda receives a `FaceHandle` and a `VertexIterator` over that face’s vertices:
 
 ```cpp
-auto compute_vn = [&] (const FaceHandle face_id, const VertexIterator& fv) { ... };
+auto compute_vn = [&](const FaceHandle face_id, const VertexIterator& fv) { /* … */ };
 ```
 
-This lambda gets called on each face in the mesh. The second argument `fv` is a `VertexIterator` that provides access to the 3 vertices of the face (since it is an `Op::FV` query). In this example:
+Here the lambda builds the face normal, then uses `atomicAdd` so each incident vertex receives a contribution.
 
-- It computes the face normal by forming two edge vectors and taking their cross product.
+### Cooperative groups
 
-- Then, it loops over the 3 face vertices and adds the face normal to each vertex using `atomicAdd`.
-
-
-** 2- Cooperative Group**
-
-Query operations must be called collectively by all threads in the CUDA block. To ensure this, a cooperative thread group is created using:
+Query dispatch must run **collectively** across the block. Capture the thread block group and pass it into `dispatch`:
 
 ```cpp
 auto block = cooperative_groups::this_thread_block();
 ```
-This group is passed into the query object to ensure synchronization and correctness. See [here](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#cooperative-groups) for more information about CUDA cooperative groups 
 
-**3- Creating the Query Object**
+??? info "CUDA Cooperative Groups"
+    Background: [CUDA C++ Programming Guide — Cooperative Groups](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#cooperative-groups).
 
-You create a `Query<blockSize>` object, passing in the RXMesh execution context:
+### `Query` object
+
+Construct a **`Query<blockSize>`** (template argument matches your kernel’s `blockSize`) with the **`context`** argument RXMesh passes to your kernel:
 
 ```cpp
 Query<blockSize> query(context);
 ```
 
-This object encapsulates all the logic required to load neighborhood information into shared memory and provide access to it during execution.
+This object manages loading neighborhood data into shared memory for the ops you dispatch.
 
+### Shared memory allocator
 
-**4- Shared Memory Allocator**
-
-RXMesh allows you to use additional shared memory inside the kernel. To manage that safely alongside the memory RXMesh uses, you should use the `ShmemAllocator`:
+Use **[`ShmemAllocator`](shmem_allocator.md)** for **your** dynamic shared-memory allocations so they do not collide with RXMesh’s internal buffers:
 
 ```cpp
 ShmemAllocator shrd_alloc;
 ```
-This allocator ensures proper alignment and avoids overlaps with internal buffers. You can then use `shrd_alloc`
-to allocate shared memory for other purposes without worrying that they will overlap with RXMesh shared memory used to do the query operation. You have to make sure that the amount of shared memory is allocated properly you call `run_kernel`. See [here](shmem_allocator.md) for more information about `ShmemAllocator`.
 
-**5- Dispatching the Query**
-   
-The actual work/query is launched using:
+The total dynamic shared memory for the launch must match what you configured when calling **`run_kernel`** / **`prepare_launch_box`** (through **`user_shmem`** on the automatic overload).
 
-```cpp
-query.dispatch<Op::FV>(block, shrd_alloc, compute_vn);
-```
+### Dispatching the query
 
-This:
+??? note "`query.dispatch<Op>(block, shrd_alloc, lambda)`"
+    ```cpp
+    query.dispatch<Op::FV>(block, shrd_alloc, compute_vn);
+    ```
 
-- Executes the `Op::FV` query.
-- Allocates and initializes internal shared memory.
-- Runs the user-defined lambda (`compute_vn`) on each face.
+    - Runs the **`Op::FV`** query over faces.
+    - Sets up internal shared memory for that query.
+    - Invokes **`compute_vn`** for each face.
 
+### Restricting to an active set
 
-#### Restricting to an Active Set
-
-Sometimes you only want to run the query on a subset of elements (e.g., active faces). You can define an **active set predicate**:
+To limit work to a subset of mesh elements (e.g. only certain faces), define an **active-set** predicate and pass it into the **`dispatch`** overload that supports filtering:
 
 ```cpp
-auto active_set = [&] (FaceHandle fh) -> bool { ... };
+auto active_set = [&](FaceHandle fh) -> bool { /* … */ };
+query.dispatch<Op::FV>(block, shrd_alloc, compute_vn, active_set);
 ```
 
-You then pass it to `dispatch`:
-
-```cpp
-query.dispatch<Op::FV, blockSize>(context, compute_vn, active_set);
-```
-This improves performance by skipping unnecessary computations.
+Skipping inactive elements avoids unnecessary work when the predicate is cheap to evaluate.
