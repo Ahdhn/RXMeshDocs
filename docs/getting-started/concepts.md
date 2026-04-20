@@ -24,7 +24,7 @@ RXMesh defines three handle types:
 | `EdgeHandle`   | An edge    |
 | `FaceHandle`   | A face     |
 
-Handles are the primary way to refer to mesh elements throughout the API. You use them to read and write [attributes](../rxmesh/working_with_attributes.md), and they are passed into lambdas by [`for_each`](../rxmesh/for_each.md) and [query kernels](../rxmesh/run_query_kernel.md).
+Handles are the primary way to refer to mesh elements throughout RXMesh. You use handles to identify elements when you read or write [attributes](../rxmesh/working_with_attributes.md). Handles are used also as the signature of the lambda function passed to [`for_each`](../rxmesh/for_each.md) operations.
 
 ```cpp
 rx.for_each_vertex(
@@ -63,11 +63,11 @@ Attributes are covered in detail under [Managing Attributes](../rxmesh/managing_
 
 ---
 
-## **Operations: `for_each` vs Queries**
+## **`for_each` Operations**
 
 RXMesh provides two main ways to run computations over the mesh:
 
-### Element-Wise Operations (`for_each`)
+### Element-wise Operations
 
 Use `for_each` when your computation depends only on a single element, with no need to access neighbors. The lambda receives one handle at a time:
 
@@ -79,9 +79,9 @@ rx.for_each_vertex(DEVICE, [color] __device__(const VertexHandle vh) {
 
 This runs a parallel loop over all vertices (or edges, or faces). See [`for_each`](../rxmesh/for_each.md).
 
-### Query Kernels (`run_query_kernel`)
+### Connectivity-based Operations
 
-Use a query kernel when you need to access **neighboring elements**, for example, the vertices of a face or the one-ring neighbors of a vertex. Queries are specified using the `Op` enum:
+Use `for_each<Op, blockThreads>` when you need to access **neighboring elements**, e.g., the vertices of a face or the one-ring neighbors of a vertex. Queries are specified using the `Op` enum:
 
 | Op      | Meaning                                |
 |---------|----------------------------------------|
@@ -95,10 +95,10 @@ Use a query kernel when you need to access **neighboring elements**, for example
 | `Op::FF` | For each face, its adjacent faces      |
 | `Op::EVDiamond` | For each edge, its incident and opposite vertices |
 
-A query kernel receives the input element's handle and an **iterator** over the output elements:
+The lambda receives the input element's handle and an **iterator** over the output elements:
 
 ```cpp
-rx.run_query_kernel<Op::FV, 256>(
+rx.for_each<Op::FV, 256>(
     [=] __device__(FaceHandle fh, VertexIterator& fv) {
         // fv[0], fv[1], fv[2] are the three vertex handles
         auto p0 = coords.to_glm<3>(fv[0]);
@@ -107,7 +107,7 @@ rx.run_query_kernel<Op::FV, 256>(
     });
 ```
 
-See [Query Kernels](../rxmesh/run_query_kernel.md) for the full API and query table. For advanced use cases where you need to combine multiple queries or use shared memory, see [Custom Kernels](../rxmesh/run_kernel.md).
+See [Connectivity `for_each`](../rxmesh/for_each.md#connectivity-for_each-query-op) for the full API and [supported query types](../rxmesh/for_each.md#supported-query-types). For advanced use cases where you need to combine multiple queries or use shared memory, see [Custom Kernels](../rxmesh/run_kernel.md).
 
 ---
 
@@ -118,7 +118,7 @@ RXMesh is designed for GPU execution. The two key locations for data are:
 - **`HOST`**: CPU memory. Used for I/O, visualization, debugging.
 - **`DEVICE`**: GPU memory. Used for computation.
 
-Most computation in RXMesh happens on the device. Lambdas passed to `for_each` or query kernels must be annotated with `__device__` and must capture data by value (not by reference). After computation, results are typically moved back to the host for output or visualization:
+Most computation in RXMesh happens on the device. Lambdas passed to `for_each` (element-wise or query overloads) must be annotated with `__device__` and must capture data by value (not by reference). After computation, results are typically moved back to the host for output or visualization:
 
 ```cpp
 attribute.move(DEVICE, HOST);
@@ -132,7 +132,7 @@ The most basic workflow in RXMesh looks like this:
 
 1. **Initialize** RXMesh and load a mesh → `RXMeshStatic rx("mesh.obj")`
 2. **Create attributes** to store data on mesh elements → `rx.add_vertex_attribute<float>(...)`
-3. **Run computations** using `for_each` or `run_query_kernel`.  
+3. **Run computations** using element-wise `for_each` or `for_each<Op, blockThreads>`.  
 4. **Move results** to the host if needed → `attr.move(DEVICE, HOST)`
 5. **Visualize or export** → Polyscope
 
