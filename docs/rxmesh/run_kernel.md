@@ -1,6 +1,6 @@
 # **`run_kernel` **
 
-`run_kernel` is a low-level interface that allows you to launch a custom CUDA kernel where part of the logic involves neighborhood-based mesh queries. Unlike `run_query_kernel`, which encapsulates both the query and the computation in a single lambda, `run_kernel` gives you control over the full kernel body. This is useful when:
+`run_kernel` is a low-level interface that allows you to launch a custom CUDA kernel where part of the logic involves neighborhood-based mesh queries. Unlike [`for_each`](for_each.md), which encapsulates both the query and the computation in a single lambda, `run_kernel` gives you control over the full kernel body. This is useful when:
 
 - You need to perform computation before or after the query operation.
 - You want to cache or reuse data in shared memory.
@@ -27,7 +27,7 @@ void run_kernel(
 
 This overload performs all the setup work. It is the most flexible but also expects more inputs.
 
-- `op`: A list of one or more query operations to be used inside the kernel. See [Supported Query Types](run_query_kernel.md#supported-queries-types).
+- `op`: A list of one or more query operations to be used inside the kernel. See [Supported query types](for_each.md#supported-query-types).
 - `oriented`: Whether query results need to be sorted.
 - `with_vertex_valence`: Whether to precompute vertex valences and store them in shared memory.
 - `is_concurrent`: Whether the queries will be accessed concurrently in the same kernel body.
