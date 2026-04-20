@@ -41,7 +41,7 @@ rx.for_each_vertex(
 
 // Face Normal
 auto face_normal = *rx.add_face_attribute<float>("fNormals", 3);
-rx.run_query_kernel<Op::FV, 256>(
+rx.for_each<Op::FV, 256>(
     [=] __device__(FaceHandle face_id, VertexIterator & fv) mutable {
         // get the face's three vertices coordinates
         const vec3<float> c0 = vertex_pos.to_glm<3>(fv[0]);
@@ -77,4 +77,4 @@ If everything is set up correctly, you should see something like this, i.e., a m
 </figure>
 
 
-This example touches on several core RXMesh concepts, e.g., mesh [attributes](../rxmesh/working_with_attributes.md), element-wise traversal with [`for_each`](../rxmesh/for_each.md), [query kernel](../rxmesh/run_query_kernel.md) execution, and moving data between the host and device. In the following sections, we will explore these ideas in more depth and cover [additional operations on static meshes](../rxmesh/static.md), [attribute manipulation](../rxmesh/working_with_attributes.md), working with [sparse](../rxmesh/sparse_matrices.md) and [dense](../rxmesh/dense_matrices.md) matrices, [linear system solvers](../rxmesh/solvers.md), [handling dynamic connectivity](../rxmesh/dynamic.md), and performing [automatic differentiation](../rxmesh/ad.md) on the GPU.
+This example touches on several core RXMesh concepts, e.g., mesh [attributes](../rxmesh/working_with_attributes.md), element-wise traversal with [`for_each`](../rxmesh/for_each.md), [connectivity-based`for_each<Op, blockThreads>`](../rxmesh/for_each.md#connectivity-for_each-query-op) computation, and moving data between the host and device. In the following sections, we will explore these ideas in more depth and cover [additional operations on static meshes](../rxmesh/static.md), [attribute manipulation](../rxmesh/working_with_attributes.md), working with [sparse](../rxmesh/sparse_matrices.md) and [dense](../rxmesh/dense_matrices.md) matrices, [linear system solvers](../rxmesh/solvers.md), [handling dynamic connectivity](../rxmesh/dynamic.md), and performing [automatic differentiation](../rxmesh/ad.md) on the GPU.
