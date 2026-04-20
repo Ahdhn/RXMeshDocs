@@ -81,7 +81,7 @@ This runs a parallel loop over all vertices (or edges, or faces). See [`for_each
 
 ### Connectivity-based Operations
 
-Use `for_each<Op, blockThreads>` when you need to access **neighboring elements**, e.g., the vertices of a face or the one-ring neighbors of a vertex. Queries are specified using the `Op` enum:
+Use `for_each<Op, blockThreads>` when you need to access **neighboring elements**, e.g., the vertices of a face or the one-ring neighbors of a vertex. Neighbor queries are specified using the `Op` enum:
 
 | Op      | Meaning                                |
 |---------|----------------------------------------|
