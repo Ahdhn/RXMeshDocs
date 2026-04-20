@@ -21,7 +21,7 @@ auto coords = *rx.get_input_vertex_coordinates();
 auto normals = *rx.add_face_attribute<float>("fNormals", 3);
 
 // For each face, query its vertices (Op::FV) using 256 threads per block
-rx.run_query_kernel<Op::FV, 256>(
+rx.for_each<Op::FV, 256>(
     // Device lambda function runs on the GPU; [=] captures attributes by value
     [=] __device__(FaceHandle fh, VertexIterator& fv) mutable {
 
