@@ -57,11 +57,18 @@ nav:
   - Matrices & Solvers:
     - Dense Matrices: rxmesh/dense_matrices.md
     - Sparse Matrices: rxmesh/sparse_matrices.md
-    - Solvers: rxmesh/solvers.md
+    - Linear Solvers: rxmesh/solvers.md
   - Dynamic Mesh Processing:
     - Overview: rxmesh/dynamic.md
     - Cavity Operations: rxmesh/cavity.md
-  - Automatic Differentiation: rxmesh/ad.md
+  - Automatic Differentiation:
+    - Overview: rxmesh/ad.md
+    - Dual Numbers: rxmesh/diff/scalar.md
+    - Terms: rxmesh/diff/terms.md
+    - Scalar Problem: rxmesh/diff/scalar_problem.md
+    - Vector Problem: rxmesh/diff/vector_problem.md
+    - Non-linear Solvers: rxmesh/diff/nonlinear_solvers.md
+    - Advanced Topics: rxmesh/diff/advanced.md
   - Applications & Examples: rxmesh/apps.md
   - Reference:
     - Handles: rxmesh/handles.md
