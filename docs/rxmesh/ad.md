@@ -62,13 +62,11 @@ Use the scalar problem when your energy is a sum of scalars (ARAP, Dirichlet, Ne
 
 ---
 
-## **Where to Go Next**
+The following sections cover:
 
-- **[Dual Numbers & `Scalar`](diff/scalar.md)**: the arithmetic type used for compute derivatives.
-- **[Terms & Differentiable Kernels](diff/terms.md)**: how to write the lambda that defines one additive piece of an objective.
+- **[Dual Numbers](diff/scalar.md)**: the arithmetic type used for compute derivatives.
 - **[Scalar Problem](diff/scalar_problem.md)**: `DiffScalarProblem`, its `objective`/`grad`/`hess`, and the evaluation API.
 - **[Vector Problem](diff/vector_problem.md)**: `DiffVectorProblem` for non-linear least squares.
+- **[Terms](diff/terms.md)**: more in-depth discussion about the lambda that defines one additive piece of an objective.
 - **[Non-linear Solvers](diff/nonlinear_solvers.md)**: Newton, Gauss-Newton, LBFGS, and gradient descent, including line search.
 - **[Advanced Topics](diff/advanced.md)**: Hessian PSD projection, interaction/contact terms, boundary conditions, and line-search callbacks.
-
-RXMesh applications that exercise the AD layer end-to-end include [DiffARAP](https://github.com/owensgroup/RXMesh/tree/main/apps/DiffARAP), [NeoHookean](https://github.com/owensgroup/RXMesh/tree/main/apps/NeoHookean), [Smoothing](https://github.com/owensgroup/RXMesh/tree/main/apps/Smoothing), [Param](https://github.com/owensgroup/RXMesh/tree/main/apps/Param), [ManiOpt](https://github.com/owensgroup/RXMesh/tree/main/apps/ManiOpt), [EmbeddedARAP](https://github.com/owensgroup/RXMesh/tree/main/apps/EmbeddedARAP), and [PolyVector](https://github.com/owensgroup/RXMesh/tree/main/apps/PolyVector).
