@@ -60,13 +60,19 @@ nav:
     - Linear Solvers: rxmesh/solvers.md
   - Dynamic Mesh Processing:
     - Overview: rxmesh/dynamic.md
-    - Cavity Operations: rxmesh/cavity.md
+    - RXMeshDynamic: rxmesh/rxmesh_dynamic.md
+    - Cavity Operations:
+      - Concepts: rxmesh/cavity.md
+      - CavityOp: rxmesh/cavity_op.md
+      - CavityManager: rxmesh/cavity_manager.md
+      - DEdgeHandle: rxmesh/dedge_handle.md
+    - Host-Side Driver Loop: rxmesh/dynamic_loop.md
   - Automatic Differentiation:
     - Overview: rxmesh/ad.md
-    - Dual Numbers: rxmesh/diff/scalar.md
-    - Terms: rxmesh/diff/terms.md
+    - Dual Numbers: rxmesh/diff/scalar.md    
     - Scalar Problem: rxmesh/diff/scalar_problem.md
     - Vector Problem: rxmesh/diff/vector_problem.md
+    - Terms: rxmesh/diff/terms.md
     - Non-linear Solvers: rxmesh/diff/nonlinear_solvers.md
     - Advanced Topics: rxmesh/diff/advanced.md
   - Applications & Examples: rxmesh/apps.md
@@ -74,6 +80,7 @@ nav:
     - Handles: rxmesh/handles.md
     - Iterators: rxmesh/iterators.md
     - LocationT: rxmesh/location_t.md
+    - Context: rxmesh/context.md
     - Query Object: rxmesh/query.md
     - LaunchBox: rxmesh/launch_box.md
     - ShmemAllocator: rxmesh/shmem_allocator.md
