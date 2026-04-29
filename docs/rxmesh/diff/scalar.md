@@ -59,7 +59,7 @@ Eigen::Vector2f g  = f.grad(); // [2x + y, x] = [10, 3]
 Eigen::Matrix2f H  = f.hess(); // [[2, 1], [1, 0]]
 ```
 
-Inside an RXMesh term you rarely call `make_active` directly; the [`iter_val`](terms.md#iter_val) helper loads the `objective` attribute into a pre-seeded vector of `Scalar` values for you.
+Inside an RXMesh term you rarely call `make_active` directly; the [`opt_var.active<...>`](terms.md#active) method on the optimization-variable attribute loads its values into a pre-seeded vector of `Scalar`s for you.
 
 ??? note "Constructors"
     - `Scalar()` — default-initialized passive zero.
@@ -155,4 +155,4 @@ assert(f.val() == 21.0f);
 
 ## **Usage**
 
-You normally do not write `make_active` by hand inside RXMesh terms. Instead, the active vector is produced by [`iter_val`](terms.md#iter_val), which reads the `objective` attribute at the current stencil's handles and seeds derivatives according to each handle's slot in the local variable vector. See [Terms](terms.md) for more information.
+You normally do not write `make_active` by hand inside RXMesh terms. Instead, the active vector is produced by [`opt_var.active<...>`](terms.md#active), which reads the optimization-variable attribute at the current stencil's handles and seeds derivatives according to each handle's slot in the local variable vector. See [Terms](terms.md) for more information.
