@@ -5,7 +5,7 @@ When defining an objective function for optimization, a **term** is one additive
 This page explains the three building blocks that are used to define a term:
 
 - **`DiffHandle`**: the handle type passed to the lambda, which knows whether the current pass is active or passive.
-- **`iter_val`**: the helper that reads the optimization variables attribute into a pre-seeded `Eigen` vector of `Scalar` values.
+- **`opt_var.active<...>()`**: the method on the optimization-variable attribute that loads its values into a pre-seeded `Eigen` vector of `Scalar` values.
 - **`element_valence`**: the compile-time helper that relates a query `Op` to the local variable vector size.
 
 ---
@@ -16,11 +16,11 @@ Once you own a [`DiffScalarProblem`](scalar_problem.md) or [`DiffVectorProblem`]
 
 ```cpp
 problem.add_term<Op::EV>(
-    [=] __device__(const auto& eh, const auto& iter, const auto& opt_var) {
+    [=] __device__(const auto& eh, const auto& iter, auto& opt_var) {
         using ActiveT = ACTIVE_TYPE(eh);
-        Eigen::Vector3<ActiveT> v0 = iter_val<3>(eh, iter, opt_var, 0);
-        Eigen::Vector3<ActiveT> v1 = iter_val<3>(eh, iter, opt_var, 1);
-        auto d  = v0 - v1;
+        Eigen::Vector3<ActiveT> v0 = opt_var.template active<3>(eh, iter, 0);
+        Eigen::Vector3<ActiveT> v1 = opt_var.template active<3>(eh, iter, 1);
+        auto d = v0 - v1;
         return d.dot(d);
     });
 ```
@@ -54,7 +54,7 @@ Every term lambda receives a `DiffHandle` instead of a raw `VertexHandle` / `Edg
     ```
 
 
-Inside the lambda you mostly just forward the handle to `iter_val` and to attributes. The one method worth knowing is:
+Inside the lambda you mostly just forward the handle to `opt_var.active<...>` and to attributes. The one method worth knowing is:
 
 ```cpp
 if (dh.is_active()) {
@@ -68,43 +68,37 @@ if (dh.is_active()) {
     - The aliases `DiffVertexHandle`, `DiffEdgeHandle`, `DiffFaceHandle` are typically what you write in lambda signatures, or you can use `auto&` and let template deduction do it.
 ---
 
-## **`iter_val`** { #iter_val }
+## **Loading Active Variables: `opt_var.active`** { #active }
 
-`iter_val` is the bridge between the optimization variable attribute and a `Scalar`-valued local variable vector.
+`opt_var.active<VariableDim>(...)` is the bridge between the optimization-variable attribute and a `Scalar`-valued local variable vector. It is a method on the variable attribute itself, so the same call works for `VertexAttribute`, `EdgeAttribute`, and `FaceAttribute`. There are two overloads commonly used in terms (a third overload for **interaction terms** is documented in [Advanced Topics](advanced.md#interaction-terms)):
 
-```cpp
-template <int VariableDim, typename DiffHandleT, typename IterT, typename AttrT>
-auto iter_val(const DiffHandleT& dh,
-              const IterT&       iter,
-              const AttrT&       opt_var,
-              int                index_in_iter);
-```
+- **Element-wise** (`opt_var.active<VariableDim>(dh)`): the term depends only on the seed handle. Returns an `Eigen::Matrix<ActiveT, VariableDim, 1>` whose derivatives are seeded at the canonical positions `0 .. VariableDim - 1`. Used when the energy at a vertex/edge/face is intrinsic to that element.
+- **Connectivity-based** (`opt_var.active<VariableDim>(dh, iter, slot)`): the term depends on a stencil produced by a query `Op`. Returns the `VariableDim` components at `iter[slot]`, with derivatives seeded at indices `[slot * VariableDim, (slot + 1) * VariableDim)`. Local variable count is `iter.size() * VariableDim`.
 
-It returns an `Eigen::Matrix<ActiveT, VariableDim, 1>` containing the `VariableDim` components of the optimization variable at `iter[index_in_iter]`, with derivatives seeded at the correct positions of the local variable vector (the layout is computed by `index_mapping(VariableDim, index_in_iter, variable_local_id)`; see [Advanced Topics](advanced.md#util)).
+In the active pass each entry is a `Scalar`; in the passive pass each entry is the underlying `float` / `double`. You write the same lambda body in both cases. The exact derivative layout is computed by `index_mapping(VariableDim, slot, variable_local_id)`; see [Advanced Topics](advanced.md#util).
 
 For a term on `Op::FV` with `VariableDim = 3`:
 
 ```cpp
-problem.add_term<Op::FV, Scalar<9>(
-    [=] __device__(const auto& fh, const auto& iter, const auto& opt_var) {
+problem.add_term<Op::FV, Scalar<9>>(
+    [=] __device__(const auto& fh, const auto& iter, auto& opt_var) {
         using ActiveT = ACTIVE_TYPE(fh);
-        Eigen::Vector3<ActiveT> v0 = iter_val<3>(fh, iter, opt_var, 0);
-        Eigen::Vector3<ActiveT> v1 = iter_val<3>(fh, iter, opt_var, 1);
-        Eigen::Vector3<ActiveT> v2 = iter_val<3>(ef, iter, opt_var, 2);        
+        Eigen::Vector3<ActiveT> v0 = opt_var.template active<3>(fh, iter, 0);
+        Eigen::Vector3<ActiveT> v1 = opt_var.template active<3>(fh, iter, 1);
+        Eigen::Vector3<ActiveT> v2 = opt_var.template active<3>(fh, iter, 2);
         // v0, v1, v2 are Eigen::Matrix<ActiveT, 3, 1>
         // Their derivatives are seeded at indices 0-2, 3-5, 6-8 respectively.
         return /* energy in terms of v0, v1, v2 */;
     });
 ```
 
-??? note "`iter_val<VariableDim>(dh, iter, attr, index)`"
-    Reads `VariableDim` components of `attr` at `iter[index]`, returning an `Eigen::Matrix<ActiveT, VariableDim, 1>`. In the active pass the result is a vector of `Scalar` with derivatives seeded at the correct local indices.
+??? note "`opt_var.active<VariableDim>(dh)`"
+    Single-handle overload. Returns the `VariableDim` components of `opt_var` at the seed handle `dh` as an `Eigen::Matrix<ActiveT, VariableDim, 1>`. In the active pass each entry is a `Scalar` with `grad()[j] = 1` at component `j`. Used when a term does not depend on a stencil (e.g., `Op::V` per-element residuals).
 
-??? note "`iter_val<VariableDim>(dh, attr)`"
-    Single-element (i.e., the computation does not depend on a stencil information) read that can be used when a term only needs the value at the seed handle, e.g., an `Op::V`.
+??? note "`opt_var.active<VariableDim>(dh, iter, index_in_iter)`"
+    Connectivity overload. Reads the `VariableDim` components of `opt_var` at `iter[index_in_iter]` and returns them as an `Eigen::Matrix<ActiveT, VariableDim, 1>`. In the active pass derivatives are seeded so that this slot is the active block in a local variable vector of size `iter.size() * VariableDim`.
 
-
-Values from other attributes (rest shape, material parameters, boundary masks, ...) are read normally via `my_attr(handle, c)` and they are treated as passive automatically.
+Values from other attributes (rest shape, material parameters, boundary masks, ...) are read normally via `my_attr(handle, c)` or the typed read helpers `my_attr.template to_eigen<N>(handle)` / `my_attr.template to_glm<N>(handle)`, and they are treated as passive automatically.
 
 ---
 
