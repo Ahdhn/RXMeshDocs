@@ -1,6 +1,6 @@
 # **Dual Numbers**
 
-Forward-mode automatic differentiation in RXMesh is built on a single arithmetic primitive, the **dual number**, implemented by the `Scalar` class. A dual number is a value that carries its own **derivatives** alongside its numerical value, so every arithmetic operation you write on it propagates derivatives automatically. If you understand `Scalar`, you can write [terms](terms.md) and everything above it in the stack falls into place.
+Forward-mode automatic differentiation in RXMesh is built on a single arithmetic primitive, the **dual number**, implemented by the `Scalar` class. A dual number is a value that carries its own **derivatives** alongside its numerical value, so every arithmetic operation you write on it propagates derivatives automatically. 
 
 ??? tip "Acknowledgement: TinyAD"
     The initial implementation of `Scalar` was adapted from [TinyAD](https://github.com/patr-schm/TinyAD), a clean and elegant C++ forward-mode AD library by Patrick Schmidt et al. We are grateful for their work since it shaped the interface users see here. The main difference in RXMesh is that `Scalar` is usable **on the GPU**, i.e., every constructor, operator, and math function is `__host__ __device__`, and the type integrates with RXMesh's execution model.
@@ -39,7 +39,7 @@ Typical choices:
 
 ## **Creating Active and Passive Values**
 
-Values inside a differentiable computation are either **active** (they track derivatives, i.e., "we are differentiating with respect to these") or **passive** (constants, e.g., the rest shape or a user parameter).
+Values inside a differentiable computation are either **active** (they track derivatives, i.e., we are differentiating with respect to them) or **passive** (constants, e.g., the rest shape or a user parameter).
 
 ```cpp
 using Diff = Scalar<2, float, true>;
@@ -58,8 +58,6 @@ float       val  = f.val();   // 23.5
 Eigen::Vector2f g  = f.grad(); // [2x + y, x] = [10, 3]
 Eigen::Matrix2f H  = f.hess(); // [[2, 1], [1, 0]]
 ```
-
-Inside an RXMesh term you rarely call `make_active` directly; the [`opt_var.active<...>`](terms.md#active) method on the optimization-variable attribute loads its values into a pre-seeded vector of `Scalar`s for you.
 
 ??? note "Constructors"
     - `Scalar()` — default-initialized passive zero.
@@ -93,6 +91,7 @@ Eigen::Matrix<float, 9, 9> H = s.hess();  // 9x9 Hessian (only if WithHessian)
 `Scalar` overloads the usual operators and common math functions so ordinary C++ code just works:
 
 ```cpp
+using Diff = Scalar<2, float, true>;
 Diff a, b, c;
 Diff expr = (a * b + 2.0f * c) / (1.0f + a * a);
 Diff sd   = sqrt(expr * expr + 1.0f);
