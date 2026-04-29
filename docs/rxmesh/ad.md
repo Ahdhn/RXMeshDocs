@@ -20,13 +20,13 @@ problem.objective->copy_from(*rx.get_input_vertex_coordinates());
 
 // Add a per-edge term: e(edge) = ||v0 - v1||^2.
 problem.add_term<Op::EV>(
-    [=] __device__(const auto& eh, const auto& iter, auto& objective) {
-        using ActiveT = ACTIVE_TYPE(fh);
+    [=] __device__(const auto& eh, const auto& iter, auto& opt_var) {
+        using ActiveT = ACTIVE_TYPE(eh);
 
-        Eigen::Vector3<ActiveT> v0 = iter_val<ActiveT, 3>(eh, iter, objective, 0);
-        Eigen::Vector3<ActiveT> v1 = iter_val<ActiveT, 3>(eh, iter, objective, 1);
-        auto d  = v0 - v1;
-        return d..squaredNorm();
+        Eigen::Vector3<ActiveT> v0 = opt_var.template active<3>(eh, iter, 0);
+        Eigen::Vector3<ActiveT> v1 = opt_var.template active<3>(eh, iter, 1);
+        auto d = v0 - v1;
+        return d.squaredNorm();
     });
 
 GradientDescent gd(problem, /*lr=*/1e-3);
