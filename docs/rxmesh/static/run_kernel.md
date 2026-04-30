@@ -34,7 +34,7 @@ This overload performs `prepare_launch_box` internally. It is the most flexible 
 
 ### 2) `LaunchBox` (explicit stream)
 
-Use this when you already called [`prepare_launch_box`](../launch_box.md) with the same `op`, kernel pointer, and shared-memory plan, and you want to **reuse** the resulting grid and shared-memory sizes across launches.
+Use this when you already called [`prepare_launch_box`](../reference/launch_box.md) with the same `op`, kernel pointer, and shared-memory plan, and you want to **reuse** the resulting grid and shared-memory sizes across launches.
 
 ??? note "`run_kernel(lb, kernel, stream, args…)`"
     ```cpp
@@ -139,7 +139,7 @@ This object manages loading neighborhood data into shared memory for the ops you
 
 ### Shared memory allocator
 
-Use **[`ShmemAllocator`](../shmem_allocator.md)** for **your** dynamic shared-memory allocations so they do not collide with RXMesh’s internal buffers:
+Use **[`ShmemAllocator`](../reference/shmem_allocator.md)** for **your** dynamic shared-memory allocations so they do not collide with RXMesh’s internal buffers:
 
 ```cpp
 ShmemAllocator shrd_alloc;

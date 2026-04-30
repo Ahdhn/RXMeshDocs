@@ -11,7 +11,7 @@ The logger is **not initialized automatically** unless you call `rx_init` (see [
 The recommended entry point is `rx_init`, which initializes logging and picks a CUDA device in one call.
 
 ??? note "`void rx_init(int device_id, spdlog::level::level_enum level = spdlog::level::info)`"
-    Initializes the logger at the requested level and, when `device_id >= 0`, selects and queries the CUDA device via `cuda_query(device_id)`. Call this once at the start of `main` before any other RXMesh API. See [Building your first app](../getting-started/first-app.md) for the full bootstrapping pattern.
+    Initializes the logger at the requested level and, when `device_id >= 0`, selects and queries the CUDA device via `cuda_query(device_id)`. Call this once at the start of `main` before any other RXMesh API. See [Building your first app](../../getting-started/first-app.md) for the full bootstrapping pattern.
 
 If you want just the logger without touching CUDA, use `Log::init` directly:
 

@@ -2,7 +2,7 @@
 
 `ShmemAllocator` is a **per-block bump allocator** over CUDA dynamic shared memory. It is the mechanism RXMesh uses to hand pieces of the block's dynamic shared memory to [`Query`](query.md) and to any scratch buffers your kernel wants to allocate on top. Because it is a pure bump allocator, allocations are `O(1)` and ordering matters: **deallocation is LIFO**.
 
-Use `ShmemAllocator` whenever you write a kernel that you launch via [`run_kernel`](static/run_kernel.md) and that carves its own shared-memory buffers.
+Use `ShmemAllocator` whenever you write a kernel that you launch via [`run_kernel`](../static/run_kernel.md) and that carves its own shared-memory buffers.
 
 ---
 

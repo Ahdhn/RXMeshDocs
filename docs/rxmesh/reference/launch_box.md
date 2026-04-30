@@ -1,6 +1,6 @@
 # **`LaunchBox`**
 
-`LaunchBox<blockThreads>` is a tiny host-side struct that holds everything RXMesh needs to launch a CUDA kernel that runs one-block-per-patch: grid size, dynamic shared-memory bytes, static shared-memory bytes, and the block size itself. You create it on the host, hand it to [`RXMeshStatic::prepare_launch_box`](#prepare_launch_box) so the library can size it for your query mix, and then pass it to [`run_kernel`](static/run_kernel.md) or [`for_each`](static/for_each.md).
+`LaunchBox<blockThreads>` is a tiny host-side struct that holds everything RXMesh needs to launch a CUDA kernel that runs one-block-per-patch: grid size, dynamic shared-memory bytes, static shared-memory bytes, and the block size itself. You create it on the host, hand it to [`RXMeshStatic::prepare_launch_box`](#prepare_launch_box) so the library can size it for your query mix, and then pass it to [`run_kernel`](../static/run_kernel.md) or [`for_each`](../static/for_each.md).
 
 ---
 

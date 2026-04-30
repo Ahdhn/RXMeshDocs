@@ -10,7 +10,7 @@ This page explains the building blocks that are used to define a term:
 
 ## **`DiffHandle`** { #diffhandle }
 
-Every term lambda receives a `DiffHandle` instead of a raw `VertexHandle` / `EdgeHandle` / `FaceHandle`. A `DiffHandle` wraps the original [handle](../handles.md) and additionally remembers whether the current kernel invocation is in active or passive mode.
+Every term lambda receives a `DiffHandle` instead of a raw `VertexHandle` / `EdgeHandle` / `FaceHandle`. A `DiffHandle` wraps the original [handle](../reference/handles.md) and additionally remembers whether the current kernel invocation is in active or passive mode.
 
 ??? info "`ACTIVE_TYPE(H)` macro"
     Inside a term lambda, you may need the active type associated with a `DiffHandle`, e.g., to load the optimization variable as an active/passive parameter or to declare an intermediate. The `ACTIVE_TYPE(H)` macro returns that type for handle type `H`. We also provide a type trait `is_scalar_v` that can be used in `constexpr` if statement as below:

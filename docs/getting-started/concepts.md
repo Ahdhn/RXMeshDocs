@@ -35,7 +35,7 @@ rx.for_each_vertex(
 
 Handles are **not** contiguous integers. If you need a flat index (e.g., for exporting or interfacing with external libraries), see [Indexing](../rxmesh/static/indexing.md).
 
-For the full handle API, see the [Handles](../rxmesh/handles.md) reference.
+For the full handle API, see the [Handles](../rxmesh/reference/handles.md) reference.
 
 ---
 

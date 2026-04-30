@@ -2,7 +2,7 @@
 
 At a high level, RXMesh operates by first partitioning the input mesh into a set of patches. Each patch contains a local subset of the mesh's vertices, edges, and faces. Then, we launch work/operations on these patches and this patch-based design enables efficient parallel execution on the GPU by leveraging locality and compact data access.
 
-To represent a mesh element (vertex, edge, or face) in this structure, RXMesh uses a [handle](../handles.md), which is a lightweight tuple of the form (`patch_id`, `local_index`). This means each handle refers to a specific element within a specific patch. Handles are used throughout the library to interact with mesh elements, e.g., when launching per-element computations with `for_each`.
+To represent a mesh element (vertex, edge, or face) in this structure, RXMesh uses a [handle](../reference/handles.md), which is a lightweight tuple of the form (`patch_id`, `local_index`). This means each handle refers to a specific element within a specific patch. Handles are used throughout the library to interact with mesh elements, e.g., when launching per-element computations with `for_each`.
 
 While handles are ideal for internal operations, users may need more interpretable or flattened indexing schemes for debugging, exporting data, or integrating with external tools. RXMesh provides two types of user-facing indices:
 

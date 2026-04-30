@@ -72,7 +72,7 @@ flowchart TD
 
 A few practical notes on this lifecycle:
 
-- **Seed selection** typically runs through [`Query::dispatch`](../query.md) so that each seed has access to its local neighborhood for predicate evaluation (e.g., "is this edge longer than threshold X?"). See the worked example in [`CavityManager`](cavity_manager.md#worked-example-edge-split).
+- **Seed selection** typically runs through [`Query::dispatch`](../reference/query.md) so that each seed has access to its local neighborhood for predicate evaluation (e.g., "is this edge longer than threshold X?"). See the worked example in [`CavityManager`](cavity_manager.md#worked-example-edge-split).
 - **`preserve_cavity = true`** tells the library to keep the interior elements' topology and attribute data readable during fill-in. Set it when your fill-in needs to, for instance, look up the vertex positions of a deleted edge to compute a midpoint.
 - **`prologue` returns `bool`**: always branch on it before touching fill-in state.
 - **`epilogue` is mandatory** on every path, even when nothing was committed. It releases locks and restores shared memory.

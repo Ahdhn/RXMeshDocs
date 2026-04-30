@@ -1,6 +1,6 @@
 # **`Context`**
 
-`Context` is the **device-side handle** to the mesh's GPU state. It bundles the pointers, sizes, and patch info that RXMesh's kernels need to resolve handles, count elements, and compute linear indices. Every kernel launched through [`run_kernel`](static/run_kernel.md) receives a `Context` by value, and [`Query`](query.md) takes one in its constructor.
+`Context` is the **device-side handle** to the mesh's GPU state. It bundles the pointers, sizes, and patch info that RXMesh's kernels need to resolve handles, count elements, and compute linear indices. Every kernel launched through [`run_kernel`](../static/run_kernel.md) receives a `Context` by value, and [`Query`](query.md) takes one in its constructor.
 
 Users rarely construct or initialize a `Context` themselves, it is created and owned by `RXMeshStatic` / `RXMeshDynamic`. The typical job of this page is to document the **read-only** accessors that are useful inside a kernel.
 
@@ -10,7 +10,7 @@ Users rarely construct or initialize a `Context` themselves, it is created and o
 
 `Context` is trivially copyable, so it is passed into kernels by value. If you use the library's dispatch helpers, you get one automatically:
 
-- [`run_kernel`](static/run_kernel.md) injects `Context` as the first argument to your `__global__` function:
+- [`run_kernel`](../static/run_kernel.md) injects `Context` as the first argument to your `__global__` function:
 
 ```cpp
 template <uint32_t blockSize>
@@ -42,7 +42,7 @@ These accessors return total counts across the whole mesh (summed across all pat
 
 ## **Linear IDs**
 
-`Context` exposes the device-side `linear_id` accessors referenced from [Indexing](static/indexing.md). These convert a handle into a **flat 0-based index** across the mesh, accounting for patch ownership (non-owned ghost elements are routed to their owner patch).
+`Context` exposes the device-side `linear_id` accessors referenced from [Indexing](../static/indexing.md). These convert a handle into a **flat 0-based index** across the mesh, accounting for patch ownership (non-owned ghost elements are routed to their owner patch).
 
 ??? note "`uint32_t linear_id(HandleT h) const`"
     Safe linear id for a vertex, edge, or face handle. Resolves ownership through the LP hash table if the element is not owned by its own patch. The returned id is in `[0, get_num<HandleT>())`.

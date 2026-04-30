@@ -1,6 +1,6 @@
 # **Iterators**
 
-An **iterator** is a device-side view over the neighborhood of one mesh element, produced by a neighborhood query. When you write a lambda for [`for_each<Op, blockThreads>`](static/for_each.md#connectivity-based-for_each) or [`run_kernel`](static/run_kernel.md), RXMesh hands you one input [handle](handles.md) and one iterator whose type depends on the query `Op`. You read the neighbors through `size()` and `operator[]`.
+An **iterator** is a device-side view over the neighborhood of one mesh element, produced by a neighborhood query. When you write a lambda for [`for_each<Op, blockThreads>`](../static/for_each.md#connectivity-based-for_each) or [`run_kernel`](../static/run_kernel.md), RXMesh hands you one input [handle](handles.md) and one iterator whose type depends on the query `Op`. You read the neighbors through `size()` and `operator[]`.
 
 Users do not construct iterators manually; they are built by the library and passed into your device lambda.
 
@@ -16,7 +16,7 @@ Users do not construct iterators manually; they are built by the library and pas
 | `EdgeIterator` | `Iterator<EdgeHandle>` |
 | `FaceIterator` | `Iterator<FaceHandle>` |
 
-For each query `Op`, the iterator type matches the "output" side of the query. For example, `Op::FV` (for each face, its vertices) hands you a `VertexIterator`; `Op::VF` hands you a `FaceIterator`. See [supported query types](static/for_each.md#supported-query-types).
+For each query `Op`, the iterator type matches the "output" side of the query. For example, `Op::FV` (for each face, its vertices) hands you a `VertexIterator`; `Op::VF` hands you a `FaceIterator`. See [supported query types](../static/for_each.md#supported-query-types).
 
 ---
 
@@ -71,6 +71,6 @@ A few queries have noteworthy structural behaviour:
 
 - **`Op::EVDiamond`**: for each edge, the iterator exposes up to **four** vertices, the two endpoints of the edge plus the two "opposite" vertices of the adjacent faces. The size is fixed at 4; boundary edges may produce one invalid slot, so always check `is_valid()`.
 - **`Op::FV`, `Op::FE`, `Op::EV`**: oriented by construction; `operator[]` returns neighbors in a consistent traversal order.
-- **`Op::VV`, `Op::VE`**: respect the `oriented` flag of the query (see [`for_each<Op, blockThreads>`](static/for_each.md#connectivity-based-for_each) and [`Query::dispatch`](query.md)).
+- **`Op::VV`, `Op::VE`**: respect the `oriented` flag of the query (see [`for_each<Op, blockThreads>`](../static/for_each.md#connectivity-based-for_each) and [`Query::dispatch`](query.md)).
 
-See [supported query types](static/for_each.md#supported-query-types) for the full list.
+See [supported query types](../static/for_each.md#supported-query-types) for the full list.

@@ -1,6 +1,6 @@
 # **`Query`**
 
-`Query<blockThreads>` is the **device-side driver** of a neighborhood query. It is the low-level building block that [`for_each<Op, blockThreads>`](static/for_each.md#connectivity-based-for_each) wraps for the common case, and that you use directly from a kernel body when you call [`run_kernel`](static/run_kernel.md). A single `Query` instance is tied to one [patch](../getting-started/concepts.md#patches) and one block; it cooperates across the block to load per-patch connectivity into shared memory, then invokes your per-element lambda over every seed element in the patch.
+`Query<blockThreads>` is the **device-side driver** of a neighborhood query. It is the low-level building block that [`for_each<Op, blockThreads>`](../static/for_each.md#connectivity-based-for_each) wraps for the common case, and that you use directly from a kernel body when you call [`run_kernel`](../static/run_kernel.md). A single `Query` instance is tied to one [patch](../../getting-started/concepts.md#patches) and one block; it cooperates across the block to load per-patch connectivity into shared memory, then invokes your per-element lambda over every seed element in the patch.
 
 ---
 
@@ -47,7 +47,7 @@ query.dispatch<Op::FV>(block, shrd_alloc, work);
 ```
 
 ??? note "`dispatch<Op>(block, shrd_alloc, compute_op, oriented = false)`"
-    Runs a `prologue` → per-element invocation of `compute_op` → `epilogue` sequence for the query `Op`. `compute_op` is a device callable with signature `(InputHandle, OutputIterator&)`, exactly the same shape as in [`for_each<Op, blockThreads>`](static/for_each.md#connectivity-based-for_each). `oriented` requests oriented traversal (only meaningful for `Op::VV` and `Op::VE`).
+    Runs a `prologue` → per-element invocation of `compute_op` → `epilogue` sequence for the query `Op`. `compute_op` is a device callable with signature `(InputHandle, OutputIterator&)`, exactly the same shape as in [`for_each<Op, blockThreads>`](../static/for_each.md#connectivity-based-for_each). `oriented` requests oriented traversal (only meaningful for `Op::VV` and `Op::VE`).
 
 ??? note "`dispatch<Op>(block, shrd_alloc, compute_op, active_set, oriented = false, allow_not_owned = false)`"
     Active-set variant. `active_set` is a device predicate on the source handle; only elements for which it returns `true` are visited. The first argument type of `compute_op` and `active_set` must match (enforced by a `static_assert`). `allow_not_owned` permits invoking `compute_op` on elements not owned by the current patch (off by default).
@@ -112,13 +112,13 @@ You can run several queries in the same kernel, in two patterns:
 - The `oriented` flag is documented as valid for `Op::VV` and `Op::VE`; other ops ignore it or treat the mesh as oriented by default (e.g., `Op::FV`, `Op::FE`, `Op::EV`).
 - `Op::EVDiamond` and `Op::EE` require an **edge-manifold** input mesh. `prepare_launch_box` errors early if the mesh is not edge-manifold.
 
-For the full list of queries, see [supported query types](static/for_each.md#supported-query-types).
+For the full list of queries, see [supported query types](../static/for_each.md#supported-query-types).
 
 ---
 
 ## **Typical In-Kernel Pattern**
 
-For a full walkthrough with a custom kernel body, see [Writing a custom CUDA kernel](static/run_kernel.md#writing-a-custom-cuda-kernel). The gist:
+For a full walkthrough with a custom kernel body, see [Writing a custom CUDA kernel](../static/run_kernel.md#writing-a-custom-cuda-kernel). The gist:
 
 ```cpp
 template <uint32_t blockSize>
