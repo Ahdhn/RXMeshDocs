@@ -42,18 +42,18 @@ nav:
     - Your First Application: getting-started/first-app.md
     - Key Concepts: getting-started/concepts.md
   - Static Mesh Processing:
-    - Overview: rxmesh/static.md
-    - Initialization: rxmesh/initialization.md
+    - Overview: rxmesh/static/static.md
+    - Initialization: rxmesh/static/initialization.md
     - Attributes:
-      - Managing Attributes: rxmesh/managing_attributes.md
-      - Working with Attributes: rxmesh/working_with_attributes.md
+      - Managing Attributes: rxmesh/static/managing_attributes.md
+      - Working with Attributes: rxmesh/static/working_with_attributes.md
     - Operations:
-      - for_each: rxmesh/for_each.md
-      - Custom Kernels: rxmesh/run_kernel.md
-    - Reductions: rxmesh/reduce_handle.md
-    - Visualization: rxmesh/visualization.md
-    - Indexing: rxmesh/indexing.md
-    - Utilities: rxmesh/static_misc.md
+      - for_each: rxmesh/static/for_each.md
+      - Custom Kernels: rxmesh/static/run_kernel.md
+    - Reductions: rxmesh/static/reduce_handle.md
+    - Visualization: rxmesh/static/visualization.md
+    - Indexing: rxmesh/static/indexing.md
+    - Utilities: rxmesh/static/static_misc.md
   - Matrices & Solvers:
     - Dense Matrices: rxmesh/dense_matrices.md
     - Sparse Matrices: rxmesh/sparse_matrices.md
