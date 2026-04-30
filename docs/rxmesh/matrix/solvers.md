@@ -1,4 +1,4 @@
-# **Solvers**
+# **Linear Solvers**
 
 RXMesh provides a set of linear system solvers that work directly with `SparseMatrix` and `DenseMatrix`. These solvers are built on top of NVIDIA's cuSolver, cuSparse, and optionally cuDSS libraries. They are designed for the types of linear systems that arise in geometry processing—Laplacian systems, Poisson equations, deformation energy minimization, and more.
 

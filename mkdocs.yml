@@ -55,9 +55,9 @@ nav:
     - Indexing: rxmesh/static/indexing.md
     - Utilities: rxmesh/static/static_misc.md
   - Matrices & Solvers:
-    - Dense Matrices: rxmesh/dense_matrices.md
-    - Sparse Matrices: rxmesh/sparse_matrices.md
-    - Linear Solvers: rxmesh/solvers.md
+    - Dense Matrices: rxmesh/matrix/dense_matrices.md
+    - Sparse Matrices: rxmesh/matrix/sparse_matrices.md
+    - Linear Solvers: rxmesh/matrix/solvers.md
   - Dynamic Mesh Processing:
     - Overview: rxmesh/dyn/dynamic.md
     - RXMeshDynamic: rxmesh/dyn/rxmesh_dynamic.md

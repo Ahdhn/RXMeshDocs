@@ -2,9 +2,9 @@
 
 RXMesh provides a `DenseMatrix` class designed for working with large numerical data tied to the mesh. `DenseMatrix` are allocated on both host and device and they are compatible with [`cuBLAS`](https://developer.nvidia.com/cublas) (on the device) and [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page) (on the host). 
 
-Dense matrices are often constructed from mesh attributes, e.g., vertex coordinates or physical quantities. Attributes can be directly converted to dense matrices and vice versa (see [Working with Attributes](static/working_with_attributes.md)).
+Dense matrices are often constructed from mesh attributes, e.g., vertex coordinates or physical quantities. Attributes can be directly converted to dense matrices and vice versa (see [Working with Attributes](../static/working_with_attributes.md)).
 
-For small matrix operations—e.g., working with 3×3 matrices for SVD—we recommend using the attribute interface's `to_eigen` and `to_glm` methods (also documented in [Working with Attributes](static/working_with_attributes.md)). These are optimized for use within GPU kernels and avoid unnecessary memory transfers.
+For small matrix operations—e.g., working with 3×3 matrices for SVD—we recommend using the attribute interface's `to_eigen` and `to_glm` methods (also documented in [Working with Attributes](../static/working_with_attributes.md)). These are optimized for use within GPU kernels and avoid unnecessary memory transfers.
 
 _Example_: Converting vertex coordinates into a dense matrix, doing computations, then writing them back:
 
