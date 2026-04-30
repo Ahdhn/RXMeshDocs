@@ -59,14 +59,14 @@ nav:
     - Sparse Matrices: rxmesh/sparse_matrices.md
     - Linear Solvers: rxmesh/solvers.md
   - Dynamic Mesh Processing:
-    - Overview: rxmesh/dynamic.md
-    - RXMeshDynamic: rxmesh/rxmesh_dynamic.md
+    - Overview: rxmesh/dyn/dynamic.md
+    - RXMeshDynamic: rxmesh/dyn/rxmesh_dynamic.md
     - Cavity Operations:
-      - Concepts: rxmesh/cavity.md
-      - CavityOp: rxmesh/cavity_op.md
-      - CavityManager: rxmesh/cavity_manager.md
-      - DEdgeHandle: rxmesh/dedge_handle.md
-    - Host-Side Driver Loop: rxmesh/dynamic_loop.md
+      - Concepts: rxmesh/dyn/cavity.md
+      - CavityOp: rxmesh/dyn/cavity_op.md
+      - CavityManager: rxmesh/dyn/cavity_manager.md
+      - DEdgeHandle: rxmesh/dyn/dedge_handle.md
+    - Host-Side Driver Loop: rxmesh/dyn/dynamic_loop.md
   - Automatic Differentiation:
     - Overview: rxmesh/diff/ad.md
     - Dual Numbers: rxmesh/diff/scalar.md    

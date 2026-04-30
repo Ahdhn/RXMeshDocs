@@ -39,7 +39,7 @@ Under the hood, RXMesh partitions the mesh into compact **patches** that fit in 
 **What RXMesh provides:**
 
 - **[Static mesh processing](rxmesh/static.md):** Parallel per-element operations and neighborhood queries over meshes with fixed connectivity.
-- **[Dynamic mesh processing](rxmesh/dynamic.md):** Topology-changing operations (edge flips, splits, collapses) with automatic patch management.
+- **[Dynamic mesh processing](rxmesh/dyn/dynamic.md):** Topology-changing operations (edge flips, splits, collapses) with automatic patch management.
 - **[Sparse and dense matrices](rxmesh/dense_matrices.md):** A linear algebra layer tightly coupled with the mesh, backed by cuSolver, cuSparse, and cuBLAS, with direct and iterative [solvers](rxmesh/solvers.md).
 - **[Automatic differentiation](rxmesh/diff/ad.md):** GPU forward-mode AD for computing gradients and Hessians of mesh-based energies, with built-in optimizers.
 

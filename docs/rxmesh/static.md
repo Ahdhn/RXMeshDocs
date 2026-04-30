@@ -14,4 +14,4 @@ During construction, `RXMeshStatic` parses the input mesh (from an `.obj` file o
 - **[Indexing](indexing.md)**: Convert between handles, linear IDs, and original input indices.
 - **[Utilities](static_misc.md)**: Boundary detection, bounding box, mesh export (OBJ/VTK), and more.
 
-For operations that change mesh topology (edge flips, splits, collapses), see [Dynamic Mesh Processing](dynamic.md).
+For operations that change mesh topology (edge flips, splits, collapses), see [Dynamic Mesh Processing](dyn/dynamic.md).
