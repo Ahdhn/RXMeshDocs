@@ -29,7 +29,110 @@ problem.add_term<Op::FV, /*ProjectHess*/ true>(
 
 ## **Interaction / Contact Terms** { #interaction-terms }
 
+Contact and collision energies depend on pairs of mesh elements that are **not** related by the mesh's fixed connectivity. RXMesh models these as **candidate pairs**, i.e., dynamically-managed lists of `(VertexHandle, VertexHandle)` or `(VertexHandle, FaceHandle)` associations that change as the optimization progresses. The user owns the logic that refreshes these pairs (e.g., a BVH proximity query) while RXMesh owns their storage and the resulting Hessian sparsity pattern.
 
+The expected capacity of each list is fixed at problem construction time:
+
+```cpp
+DiffScalarProblem<float, 3, VertexHandle> problem(rx,
+    /*assemble_hessian=*/true,
+    /*expected_vv_pairs=*/max_vv_pairs,
+    /*expected_vf_pairs=*/max_vf_pairs);
+```
+
+### Workflow { #interaction-three-step }
+
+A Newton iteration that involves contact looks like this:
+
+**Step A: Compute interaction energy (once, at setup).** Register the contact / barrier energies with `problem.add_interaction_term<Op::VV, ProjectHess>(lambda)` and/or `add_interaction_term<Op::VF, ProjectHess>(lambda)`. Like `add_term`, these are registered once and reused on every `eval_terms()` call.
+
+**Step B: Populate candidate pairs (each iteration).** The application fills `problem.vv_pairs` and/or `problem.vf_pairs` with the pairs that should be considered this iteration. The typical pattern is `pairs.reset()` followed by `pairs.insert(h0, h1)` for each detected pair (e.g., from a BVH query). Insertion can happen on the GPU (and the user does not have to worry about race condition during insertion).
+
+**Step C: Refresh sparsity and evaluate.** Call `problem.update_hessian()` so the Hessian sparsity pattern picks up the new pairs, then `problem.eval_terms()` as usual.
+
+
+```cpp
+// --- once, at setup ---
+vv_contact_energy(problem, contact_area);  // calls add_interaction_term<Op::VV>
+vf_contact_energy(problem, contact_area);  // calls add_interaction_term<Op::VF>
+
+// --- each Newton iteration ---
+add_contact(problem, rx,
+            problem.vv_pairs, problem.vf_pairs,
+            /* BVH buffers, x, contact_area, ... */);  // Step B: fill the pairs
+problem.update_hessian();                              // Step C: refresh sparsity
+problem.eval_terms();                                  //         then evaluate
+```
+
+If the line-search callback also refreshes the candidate pairs (so that trial iterates use up-to-date contacts), call `update_hessian()` again inside the callback before re-evaluating.
+
+### VV Interaction Terms { #interaction-vv }
+
+For vertex-vertex contact, register the term with `Op::VV`. The lambda takes a single seed handle plus the pair iterator:
+
+```cpp
+problem.add_interaction_term<Op::VV, /*ProjectHess*/ true>(
+    [=] __device__(const auto& id, const auto& iter, auto& opt_var) {
+        using ActiveT = ACTIVE_TYPE(id);
+
+        const VertexHandle v0 = iter[0];   // first vertex of the pair
+        const VertexHandle v1 = iter[1];   // second vertex of the pair
+
+        Eigen::Vector3<ActiveT> xi = opt_var.template active<3>(id, iter, 0);
+        Eigen::Vector3<ActiveT> xj = opt_var.template active<3>(id, iter, 1);
+
+        ActiveT d = (xi - xj).norm();
+        return /* barrier energy in d */;
+    });
+```
+
+`id` is only used to deduce `ACTIVE_TYPE(id)`; the actual pair lives in `iter[0]` and `iter[1]`. The local variable vector has size `2 * VariableDim` (one slot per pair member). Real call site: [`vv_contact_energy`](https://github.com/owensgroup/RXMesh/blob/main/apps/NeoHookean/barrier_energy.h).
+
+### VF Interaction Terms { #interaction-vf }
+
+For vertex-face contact, register the term with `Op::VF`. The lambda takes the face handle, the colliding vertex handle, and an iterator that walks the three vertices of the face:
+
+```cpp
+problem.add_interaction_term<Op::VF, /*ProjectHess*/ true>(
+    [=] __device__(const auto& fh, const auto& vh,
+                   const auto& iter, auto& opt_var) {
+        using ActiveT = ACTIVE_TYPE(fh);
+
+        // slot 0 reads the colliding vertex `vh`;
+        // slots 1..3 read the three vertices of the face `fh` (FV stencil).
+        Eigen::Vector3<ActiveT> xi = opt_var.template active<3>(fh, vh, iter, 0);
+        Eigen::Vector3<ActiveT> p0 = opt_var.template active<3>(fh, vh, iter, 1);
+        Eigen::Vector3<ActiveT> p1 = opt_var.template active<3>(fh, vh, iter, 2);
+        Eigen::Vector3<ActiveT> p2 = opt_var.template active<3>(fh, vh, iter, 3);
+
+        return /* contact / barrier energy of `xi` against triangle (p0,p1,p2) */;
+    });
+```
+
+The local variable vector has size `(iter.size() + 1) * VariableDim` = `4 * VariableDim`: one slot for `vh` plus one slot per iterator entry. Real call site: [`vf_contact_energy`](https://github.com/owensgroup/RXMesh/blob/main/apps/NeoHookean/barrier_energy.h).
+
+
+??? note "`add_interaction_term<Op, ProjectHess>(lambda)`"
+    Variant of `add_term` for candidate-pair based terms. Only `Op::VV` and `Op::VF` are supported, and the lambda shape depends on `Op`:
+
+    - `Op::VV`: lambda is `(id, iter, opt_var)`. `iter[0]` and `iter[1]` are the two vertices of the pair.
+    - `Op::VF`: lambda is `(fh, vh, iter, opt_var)`. `vh` is the colliding vertex; `iter` traverses the three vertices of `fh` (FV stencil).
+
+    Registered once at setup; reused on every `eval_terms()`.
+
+??? note "`opt_var.active<VariableDim>(id, iter, index_in_iter)` (VV form)"
+    Reads `iter[index_in_iter]` and seeds it as an independent variable inside a local vector of size `2 * VariableDim`. 
+
+??? note "`opt_var.active<VariableDim>(fh, vh, iter, index_in_iter)` (VF / mixed stencil form)"
+    `index_in_iter == 0` reads `vh`; `index_in_iter == k` for `k >= 1` reads `iter[k - 1]`. The slot at `index_in_iter` is treated as an independent variable inside a local vector of size `(iter.size() + 1) * VariableDim`.
+
+??? note "`problem.vv_pairs`, `problem.vf_pairs`"
+    Public `CandidatePairs` members owned by `DiffScalarProblem`. Application code refreshes them each iteration. Common operations: `reset()`, `insert(h0, h1)`, `num_pairs()`.
+
+??? note "`update_hessian()`"
+    Rederives the Hessian sparsity pattern from the current `vv_pairs` / `vf_pairs` and reallocates `problem.hess` accordingly. Must be called after changing the pair lists and before the next `eval_terms()`.
+
+See [NeoHookean](https://github.com/owensgroup/RXMesh/tree/main/apps/NeoHookean) for a full contact pipeline.
 
 ---
 
