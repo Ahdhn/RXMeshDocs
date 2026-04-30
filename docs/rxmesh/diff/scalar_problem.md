@@ -34,7 +34,7 @@ DiffScalarProblem<float, VertexHandle, 3> problem(rx, /*assemble_hessian=*/true)
 ```
 
 ??? note "`DiffScalarProblem(rx, assemble_hessian, expected_vv_pairs = 0, expected_vf_pairs = 0)`"
-    - **`rx`**: the [`RXMeshStatic`](../static.md) instance the problem is tied to.
+    - **`rx`**: the [`RXMeshStatic`](../static/static.md) instance the problem is tied to.
     - **`assemble_hessian`**: when `true`, allocates `hess` with the `Op::VV` sparsity pattern of `OptVarHandleT` and assembles the global Hessian during `eval_terms()`. Set to `false` for first-order methods ([gradient descent](nonlinear_solvers.md#gradient-descent)) or [matrix-free Newton](nonlinear_solvers.md#matrix-free-newton).
     - **`expected_vv_pairs`** / **`expected_vf_pairs`**: upper bounds on the number of candidate pairs for [interaction terms](advanced.md#interaction-terms). Use `0` when you do not need them.
 
@@ -46,7 +46,7 @@ DiffScalarProblem<float, VertexHandle, 3> problem(rx, /*assemble_hessian=*/true)
 std::shared_ptr<Attribute<T, OptVarHandleT>> opt_var;
 ```
 
-`problem.opt_var` is an RXMesh [attribute](../working_with_attributes.md) with `VariableDim` components per element. It holds the **current iterate**, i.e., the values your optimization is updating. You initialize it before the first evaluation, and you read the final answer from it after the solver finishes.
+`problem.opt_var` is an RXMesh [attribute](../static/working_with_attributes.md) with `VariableDim` components per element. It holds the **current iterate**, i.e., the values your optimization is updating. You initialize it before the first evaluation, and you read the final answer from it after the solver finishes.
 
 Typical initialization patterns:
 
@@ -62,7 +62,7 @@ rx.for_each_vertex(DEVICE,
     });
 ```
 
-After the solver has converged, the updated values are in the same attribute. To visualize or export them, move the attribute to the host (see [Working with Attributes](../working_with_attributes.md) and [Visualization](../visualization.md)):
+After the solver has converged, the updated values are in the same attribute. To visualize or export them, move the attribute to the host (see [Working with Attributes](../static/working_with_attributes.md) and [Visualization](../static/visualization.md)):
 
 ```cpp
 problem.opt_var->move(DEVICE, HOST);
@@ -90,7 +90,7 @@ Both `grad` and `hess` are zeroed at the start of every call to `eval_terms()`.
 problem.add_term<Op, ProjectHess, blockThreads>(lambda, oriented = false);
 ```
 
-- **`Op`**: the mesh query that defines the stencil of this term (see [supported query types](../for_each.md#supported-query-types)).
+- **`Op`**: the mesh query that defines the stencil of this term (see [supported query types](../static/for_each.md#supported-query-types)).
 - **`ProjectHess`**: boolean for whether to project the local Hessian to be Positive semidefinite matrix. See [Hessian PSD Projection](./advanced.md#hessian-psd-projection)
 - **`blockThreads`**: the CUDA block size 
 - **`lambda`**: the device lambda described in [Terms](terms.md#the-term-lambda).

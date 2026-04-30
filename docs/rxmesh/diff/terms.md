@@ -1,6 +1,6 @@
 # **Terms**
 
-When defining an objective function for optimization, a **term** is one additive piece that defined this objective function. You describe it by writing a **device lambda** over a mesh stencil like in [`for_each<Op, blockThreads>`](../for_each.md) but the lambda operates on [`Scalar`](scalar.md) dual numbers during the active pass instead of plain floats. RXMesh takes care of the rest, i.e., the local derivatives your lambda produces are scattered into the global gradient / Hessian / Jacobian owned by the problem.
+When defining an objective function for optimization, a **term** is one additive piece that defined this objective function. You describe it by writing a **device lambda** over a mesh stencil like in [`for_each<Op, blockThreads>`](../static/for_each.md) but the lambda operates on [`Scalar`](scalar.md) dual numbers during the active pass instead of plain floats. RXMesh takes care of the rest, i.e., the local derivatives your lambda produces are scattered into the global gradient / Hessian / Jacobian owned by the problem.
 
 This page explains the building blocks that are used to define a term:
 

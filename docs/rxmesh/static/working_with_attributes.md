@@ -134,7 +134,7 @@ face_normal->from_glm<3>(fh, n);
 ??? note "`to_glm<N>(handle)` / `from_glm<N>(handle, value)`"
     Converts between one attribute element and a GLM vector type. `N` must match the attribute component count.
 
-Matrix conversion utilities that convert the attribute to/from a [dense matrix](../rxmesh/dense_matrices.md):
+Matrix conversion utilities that convert the attribute to/from a [dense matrix](../dense_matrices.md):
 
 ```cpp
 auto mat = face_normal->to_matrix();

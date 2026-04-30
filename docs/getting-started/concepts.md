@@ -8,7 +8,7 @@ This page introduces the core ideas behind RXMesh system. Understanding these co
 
 RXMesh does not store the mesh as a single monolithic array. Instead, during construction, the input mesh is **partitioned into patches**. A patch is a small subset connected mesh faces that fit into GPU shared memory. Each patch contains a group of vertices, edges, and faces along with their local connectivity.
 
-This patch-based design is central to RXMesh's performance. By keeping patches small enough to reside in shared memory, neighborhood queries can be answered without accessing global memory. Users generally do not interact with patches directly, i.e., RXMesh manages partitioning, locality, and load balancing internally. However, patches influence how [indexing](../rxmesh/indexing.md) works and explain why RXMesh uses **handles** rather than raw integer indices.
+This patch-based design is central to RXMesh's performance. By keeping patches small enough to reside in shared memory, neighborhood queries can be answered without accessing global memory. Users generally do not interact with patches directly, i.e., RXMesh manages partitioning, locality, and load balancing internally. However, patches influence how [indexing](../rxmesh/static/indexing.md) works and explain why RXMesh uses **handles** rather than raw integer indices.
 
 ---
 
@@ -24,7 +24,7 @@ RXMesh defines three handle types:
 | `EdgeHandle`   | An edge    |
 | `FaceHandle`   | A face     |
 
-Handles are the primary way to refer to mesh elements throughout RXMesh. You use handles to identify elements when you read or write [attributes](../rxmesh/working_with_attributes.md). Handles are used also as the signature of the lambda function passed to [`for_each`](../rxmesh/for_each.md) operations.
+Handles are the primary way to refer to mesh elements throughout RXMesh. You use handles to identify elements when you read or write [attributes](../rxmesh/static/working_with_attributes.md). Handles are used also as the signature of the lambda function passed to [`for_each`](../rxmesh/static/for_each.md) operations.
 
 ```cpp
 rx.for_each_vertex(
@@ -33,7 +33,7 @@ rx.for_each_vertex(
     });
 ```
 
-Handles are **not** contiguous integers. If you need a flat index (e.g., for exporting or interfacing with external libraries), see [Indexing](../rxmesh/indexing.md).
+Handles are **not** contiguous integers. If you need a flat index (e.g., for exporting or interfacing with external libraries), see [Indexing](../rxmesh/static/indexing.md).
 
 For the full handle API, see the [Handles](../rxmesh/handles.md) reference.
 
@@ -59,7 +59,7 @@ auto color = *rx.add_vertex_attribute<float>("vColor", 3);
 color.move(DEVICE, HOST);  // bring results back to CPU
 ```
 
-Attributes are covered in detail under [Managing Attributes](../rxmesh/managing_attributes.md) (creating, checking, removing) and [Working with Attributes](../rxmesh/working_with_attributes.md) (accessing values, memory movement, Eigen/GLM interop).
+Attributes are covered in detail under [Managing Attributes](../rxmesh/static/managing_attributes.md) (creating, checking, removing) and [Working with Attributes](../rxmesh/static/working_with_attributes.md) (accessing values, memory movement, Eigen/GLM interop).
 
 ---
 
@@ -77,7 +77,7 @@ rx.for_each_vertex(DEVICE, [color] __device__(const VertexHandle vh) {
 });
 ```
 
-This runs a parallel loop over all vertices (or edges, or faces). See [`for_each`](../rxmesh/for_each.md).
+This runs a parallel loop over all vertices (or edges, or faces). See [`for_each`](../rxmesh/static/for_each.md).
 
 ### Connectivity-based Operations
 
@@ -107,7 +107,7 @@ rx.for_each<Op::FV, 256>(
     });
 ```
 
-See [Connectivity `for_each`](../rxmesh/for_each.md#connectivity-for_each-query-op) for the full API and [supported query types](../rxmesh/for_each.md#supported-query-types). For advanced use cases where you need to combine multiple queries or use shared memory, see [Custom Kernels](../rxmesh/run_kernel.md).
+See [Connectivity `for_each`](../rxmesh/static/for_each.md#connectivity-for_each-query-op) for the full API and [supported query types](../rxmesh/static/for_each.md#supported-query-types). For advanced use cases where you need to combine multiple queries or use shared memory, see [Custom Kernels](../rxmesh/static/run_kernel.md).
 
 ---
 
@@ -136,4 +136,4 @@ The most basic workflow in RXMesh looks like this:
 4. **Move results** to the host if needed → `attr.move(DEVICE, HOST)`
 5. **Visualize or export** → Polyscope
 
-For the complete API, continue to [Static Mesh Processing](../rxmesh/static.md).  Step 3 can also become more advanced, e.g., solving linear systems with [Matrices & Solvers](../rxmesh/solvers.md), performing [dynamic mesh operations](../rxmesh/dyn/dynamic.md) that change connectivity, or computing derivatives with [automatic differentiation](../rxmesh/diff/ad.md) for non-linear optimization.
+For the complete API, continue to [Static Mesh Processing](../rxmesh/static/static.md).  Step 3 can also become more advanced, e.g., solving linear systems with [Matrices & Solvers](../rxmesh/solvers.md), performing [dynamic mesh operations](../rxmesh/dyn/dynamic.md) that change connectivity, or computing derivatives with [automatic differentiation](../rxmesh/diff/ad.md) for non-linear optimization.

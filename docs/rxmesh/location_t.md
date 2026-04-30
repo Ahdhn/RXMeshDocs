@@ -1,6 +1,6 @@
 # **`locationT`**
 
-`locationT` is the small bitmask type that RXMesh uses to say **where** memory is allocated or **which side** of a host/device pair to act on. Every API that touches storage or launches compute, e.g., [attribute construction](managing_attributes.md), [`Attribute::move` / `reset` / `release`](working_with_attributes.md), [`DenseMatrix` construction and `move`](dense_matrices.md), and [`RXMeshStatic::for_each_*`](for_each.md#element-wise-for_each), takes a `locationT` argument.
+`locationT` is the small bitmask type that RXMesh uses to say **where** memory is allocated or **which side** of a host/device pair to act on. Every API that touches storage or launches compute, e.g., [attribute construction](static/managing_attributes.md), [`Attribute::move` / `reset` / `release`](static/working_with_attributes.md), [`DenseMatrix` construction and `move`](dense_matrices.md), and [`RXMeshStatic::for_each_*`](static/for_each.md#element-wise-for_each), takes a `locationT` argument.
 
 ---
 

@@ -1,6 +1,6 @@
 # **Handles**
 
-Every mesh element in RXMesh, i.e., vertex, edge, or face, is identified by a **handle**. A handle is a lightweight 64-bit value that encodes the **patch** the element lives in together with its **local index** within that patch. Handles are the primary way to reference mesh elements in [`for_each`](for_each.md), [`run_kernel`](run_kernel.md), [attributes](working_with_attributes.md), [dense](dense_matrices.md) / [sparse](sparse_matrices.md) matrices, and the [AD problem](diff/ad.md) layer.
+Every mesh element in RXMesh, i.e., vertex, edge, or face, is identified by a **handle**. A handle is a lightweight 64-bit value that encodes the **patch** the element lives in together with its **local index** within that patch. Handles are the primary way to reference mesh elements in [`for_each`](static/for_each.md), [`run_kernel`](static/run_kernel.md), [attributes](static/working_with_attributes.md), [dense](dense_matrices.md) / [sparse](sparse_matrices.md) matrices, and the [AD problem](diff/ad.md) layer.
 
 For a conceptual introduction, see [Key Concepts — Handles](../getting-started/concepts.md#handles). This page is the API reference.
 
@@ -34,7 +34,7 @@ Each handle stores a single `uint64_t` internally:
 - Lower 16 bits encode `local_id` within the patch.
 - An invalid / default-constructed handle is `INVALID64` (all bits set).
 
-Because handles are not contiguous integers, code that needs a flat index should use [Indexing](indexing.md) (`linear_id` / `map_to_global`).
+Because handles are not contiguous integers, code that needs a flat index should use [Indexing](static/indexing.md) (`linear_id` / `map_to_global`).
 
 ---
 
@@ -103,4 +103,4 @@ rx.for_each_vertex(DEVICE,
     });
 ```
 
-Handles are used both as the **input** and the **output** of query operations. Iterators produced by [`for_each<Op, blockThreads>`](for_each.md#connectivity-based-for_each) yield handles of the appropriate type, see [Iterators](iterators.md).
+Handles are used both as the **input** and the **output** of query operations. Iterators produced by [`for_each<Op, blockThreads>`](static/for_each.md#connectivity-based-for_each) yield handles of the appropriate type, see [Iterators](iterators.md).

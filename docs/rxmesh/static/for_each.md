@@ -13,7 +13,7 @@ If you need **multiple** different `Op` operations or custom shared memory in on
 
 ## **Element-wise `for_each`**
 
-Use this when your work uses only a **single** handle per invocation (no adjacency). Each element is a [handle](handles.md). 
+Use this when your work uses only a **single** handle per invocation (no adjacency). Each element is a [handle](../handles.md). 
 
 `location` is a **bitmask** of where to run, i.e., you can set `HOST` and `DEVICE` so that both code paths run. `stream` and `with_omp` apply to the device and host paths respectively (defaults: `stream = NULL`, `with_omp = true`).
 
@@ -56,7 +56,7 @@ More background: [CUDA C++ Programming Guide — extended lambdas](https://docs.
 
 ## **Connectivity-based `for_each`**
 
-These overloads launch a kernel where each thread processes one **seed** mesh element (vertex, edge, or face depending on `Op`) and exposes **neighborhood** connectivity through an [iterator](iterators.md). The iterator type depends on `Op` (for example `Op::FV` yields vertex neighbors of each face). This is only supported on the device. 
+These overloads launch a kernel where each thread processes one **seed** mesh element (vertex, edge, or face depending on `Op`) and exposes **neighborhood** connectivity through an [iterator](../iterators.md). The iterator type depends on `Op` (for example `Op::FV` yields vertex neighbors of each face). This is only supported on the device. 
 
 The example computes squared edge lengths using `Op::EV`:
 
@@ -93,7 +93,7 @@ rx.for_each<Op::EV, blockSize>(
     - **`oriented`** (default `false`): oriented traversal where supported (e.g. `Op::VV`, `Op::VE`).
     - **`stream`**: CUDA stream for the launch (default null stream).
 
-    RXMesh fills a [`LaunchBox<blockThreads>`](launch_box.md) via `prepare_launch_box` for this query and launches the internal query kernel.
+    RXMesh fills a [`LaunchBox<blockThreads>`](../launch_box.md) via `prepare_launch_box` for this query and launches the internal query kernel.
 
 ??? note "`for_each<op, blockThreads>(lb, user_lambda, oriented = false, stream = NULL) const`"
     ```cpp
@@ -104,7 +104,7 @@ rx.for_each<Op::EV, blockSize>(
                   const bool              oriented = false,
                   cudaStream_t            stream   = NULL) const;
     ```
-    Same contract as above, but you supply a **precomputed** [`LaunchBox`](launch_box.md) (using `prepare_launch_box`) to reuse launch configuration across repeated launches. The `lb` must match the same `op`, `blockThreads`, and internal query kernel.
+    Same contract as above, but you supply a **precomputed** [`LaunchBox`](../launch_box.md) (using `prepare_launch_box`) to reuse launch configuration across repeated launches. The `lb` must match the same `op`, `blockThreads`, and internal query kernel.
 
 ### Supported neighbor query types {: #supported-query-types }
 
