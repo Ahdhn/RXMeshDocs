@@ -22,7 +22,7 @@ solver.apply_bc(bc_mask);   // optional
 solver.line_search(...);    // or take_step() for GradientDescent
 ```
 
-Linear systems inside `NewtonSolver` and `GaussNewtonSolver` are delegated to the [linear solvers](../solvers.md). Any of `CholeskySolver`, `cuDSSCholeskySolver`, `LUSolver`, `QRSolver`, `CGSolver`, `PCGSolver`, or `CGMatFreeSolver` can be plugged in.
+Linear systems inside `NewtonSolver` and `GaussNewtonSolver` are delegated to the [linear solvers](../matrix/solvers.md). Any of `CholeskySolver`, `cuDSSCholeskySolver`, `LUSolver`, `QRSolver`, `CGSolver`, `PCGSolver`, or `CGMatFreeSolver` can be plugged in.
 
 ---
 

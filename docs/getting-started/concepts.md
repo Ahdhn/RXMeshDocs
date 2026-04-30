@@ -136,4 +136,4 @@ The most basic workflow in RXMesh looks like this:
 4. **Move results** to the host if needed → `attr.move(DEVICE, HOST)`
 5. **Visualize or export** → Polyscope
 
-For the complete API, continue to [Static Mesh Processing](../rxmesh/static/static.md).  Step 3 can also become more advanced, e.g., solving linear systems with [Matrices & Solvers](../rxmesh/solvers.md), performing [dynamic mesh operations](../rxmesh/dyn/dynamic.md) that change connectivity, or computing derivatives with [automatic differentiation](../rxmesh/diff/ad.md) for non-linear optimization.
+For the complete API, continue to [Static Mesh Processing](../rxmesh/static/static.md).  Step 3 can also become more advanced, e.g., solving linear systems with [Matrices & Solvers](../rxmesh/matrix/solvers.md), performing [dynamic mesh operations](../rxmesh/dyn/dynamic.md) that change connectivity, or computing derivatives with [automatic differentiation](../rxmesh/diff/ad.md) for non-linear optimization.

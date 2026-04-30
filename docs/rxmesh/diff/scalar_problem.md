@@ -77,8 +77,8 @@ DenseMatrix<T, Eigen::RowMajor> grad;               // (|elems|, VariableDim)
 HessianSparseMatrix<T, VariableDim>* hess = nullptr; // optional
 ```
 
-- **`grad`** is a [`DenseMatrix`](../dense_matrices.md) whose `i`-th row holds the global gradient entries at element `i`. Indexable by both linear index and [`OptVarHandleT`](../handles.md).
-- **`hess`** is a block-sparse matrix whose non-zero structure is the `Op::VV` adjacency of `OptVarHandleT`. Each non-zero is a `VariableDim × VariableDim` block of second derivatives. It is only allocated when `assemble_hessian = true`. Access via `(row_handle, col_handle, local_i, local_j)`; see [Advanced Topics](advanced.md#hessian-matrix) for the block access API. The underlying container inherits from [`SparseMatrix`](../sparse_matrices.md), so matrix operations like `multiply` and `transpose` are available.
+- **`grad`** is a [`DenseMatrix`](../matrix/dense_matrices.md) whose `i`-th row holds the global gradient entries at element `i`. Indexable by both linear index and [`OptVarHandleT`](../handles.md).
+- **`hess`** is a block-sparse matrix whose non-zero structure is the `Op::VV` adjacency of `OptVarHandleT`. Each non-zero is a `VariableDim × VariableDim` block of second derivatives. It is only allocated when `assemble_hessian = true`. Access via `(row_handle, col_handle, local_i, local_j)`; see [Advanced Topics](advanced.md#hessian-matrix) for the block access API. The underlying container inherits from [`SparseMatrix`](../matrix/sparse_matrices.md), so matrix operations like `multiply` and `transpose` are available.
 
 Both `grad` and `hess` are zeroed at the start of every call to `eval_terms()`.
 
@@ -181,7 +181,7 @@ problem.eval_matvec(in, out);
 
 ## **End-to-End Execution**
 
-Putting the scalar problem together with a [Newton solver](nonlinear_solvers.md#newton) and a [Cholesky linear solver](../solvers.md#cholesky-solver) gives the canonical optimization loop used by in many applications:
+Putting the scalar problem together with a [Newton solver](nonlinear_solvers.md#newton) and a [Cholesky linear solver](../matrix/solvers.md#cholesky-solver) gives the canonical optimization loop used by in many applications:
 
 ```cpp
 RXMeshStatic rx("mesh.obj");

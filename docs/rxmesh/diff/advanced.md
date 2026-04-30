@@ -192,7 +192,7 @@ A handful of small helpers show up in term code and solver:
 
 ## **Hessian Matrix** { #hessian-matrix }
 
-The block-sparse Hessian owned by [`DiffScalarProblem`](scalar_problem.md) is a `HessianSparseMatrix<T, K>`. Its sparsity pattern is driven from `Op::VV` adjacency where each non-zero is a `K × K` block of second derivatives between two elements. It inherits from [`SparseMatrix`](../sparse_matrices.md), so everything documented there (CSR accessors, `multiply`, `transpose`, `to_eigen`, ...) applies.
+The block-sparse Hessian owned by [`DiffScalarProblem`](scalar_problem.md) is a `HessianSparseMatrix<T, K>`. Its sparsity pattern is driven from `Op::VV` adjacency where each non-zero is a `K × K` block of second derivatives between two elements. It inherits from [`SparseMatrix`](../matrix/sparse_matrices.md), so everything documented there (CSR accessors, `multiply`, `transpose`, `to_eigen`, ...) applies.
 
 The block-aware accessors are the main addition:
 

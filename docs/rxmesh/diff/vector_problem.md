@@ -75,7 +75,7 @@ DenseMatrix<T, Eigen::RowMajor>                  grad;       // (|elems|, Variab
 std::shared_ptr<Attribute<T, OptVarHandleT>>     opt_var;
 ```
 
-- **`jac`**: a CSR sparse matrix that stacks the per-term block-sparse Jacobians. Inherits from [`SparseMatrix`](../sparse_matrices.md), so `multiply` and `transpose` work out of the box. Access by `(term_id, row_handle, col_handle, local_i, local_j)`.
+- **`jac`**: a CSR sparse matrix that stacks the per-term block-sparse Jacobians. Inherits from [`SparseMatrix`](../matrix/sparse_matrices.md), so `multiply` and `transpose` work out of the box. Access by `(term_id, row_handle, col_handle, local_i, local_j)`.
 - **`residual`**: the stacked residual `r(x)`. Filled by `eval_terms()`.
 - **`grad`**: `Jᵀ r`, produced by `eval_terms_sum_of_squares()`. Has the same shape as a `DiffScalarProblem` gradient so the same solver plumbing can consume it.
 
