@@ -1,6 +1,6 @@
 # **Handles**
 
-Every mesh element in RXMesh, i.e., vertex, edge, or face, is identified by a **handle**. A handle is a lightweight 64-bit value that encodes the **patch** the element lives in together with its **local index** within that patch. Handles are the primary way to reference mesh elements in [`for_each`](for_each.md), [`run_kernel`](run_kernel.md), [attributes](working_with_attributes.md), [dense](dense_matrices.md) / [sparse](sparse_matrices.md) matrices, and the [AD problem](ad.md) layer.
+Every mesh element in RXMesh, i.e., vertex, edge, or face, is identified by a **handle**. A handle is a lightweight 64-bit value that encodes the **patch** the element lives in together with its **local index** within that patch. Handles are the primary way to reference mesh elements in [`for_each`](for_each.md), [`run_kernel`](run_kernel.md), [attributes](working_with_attributes.md), [dense](dense_matrices.md) / [sparse](sparse_matrices.md) matrices, and the [AD problem](diff/ad.md) layer.
 
 For a conceptual introduction, see [Key Concepts — Handles](../getting-started/concepts.md#handles). This page is the API reference.
 

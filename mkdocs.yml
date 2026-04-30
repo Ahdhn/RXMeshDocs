@@ -68,7 +68,7 @@ nav:
       - DEdgeHandle: rxmesh/dedge_handle.md
     - Host-Side Driver Loop: rxmesh/dynamic_loop.md
   - Automatic Differentiation:
-    - Overview: rxmesh/ad.md
+    - Overview: rxmesh/diff/ad.md
     - Dual Numbers: rxmesh/diff/scalar.md    
     - Scalar Problem: rxmesh/diff/scalar_problem.md
     - Vector Problem: rxmesh/diff/vector_problem.md
