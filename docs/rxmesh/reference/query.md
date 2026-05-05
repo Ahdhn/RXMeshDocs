@@ -1,6 +1,6 @@
 # **`Query`**
 
-`Query<blockThreads>` is the **device-side driver** of a neighborhood query. It is the low-level building block that [`for_each<Op, blockThreads>`](../static/for_each.md#connectivity-based-for_each) wraps for the common case, and that you use directly from a kernel body when you call [`run_kernel`](../static/run_kernel.md). A single `Query` instance is tied to one [patch](../../getting-started/concepts.md#patches) and one block; it cooperates across the block to load per-patch connectivity into shared memory, then invokes your per-element lambda over every seed element in the patch.
+`Query<blockThreads>` is the **device-side driver** of a neighborhood query. It is the low-level building block that [`for_each<Op, blockThreads>`](../static/for_each.md#connectivity-based-for_each) wraps for the common case, and that you use directly from a kernel body when you call [`run_kernel`](../static/run_kernel.md). A single `Query` instance is tied to one [patch](../../getting-started/concepts.md#patches) and one block. It cooperates across the block to load per-patch connectivity into shared memory, then invokes your per-element lambda over every seed element in the patch.
 
 ---
 
@@ -23,7 +23,7 @@ Query<256> query(context);
 ```
 
 ??? note "`Query(const Context& context, uint32_t pid = blockIdx.x)`"
-    Binds the query to a [`Context`](context.md) and a patch id. The default, `pid = blockIdx.x`, matches the "one block per patch" launch shape that [`prepare_launch_box`](launch_box.md) produces. `Query` is non-copyable; construct it fresh in each kernel invocation.
+    Binds the query to a [`Context`](context.md) and a patch id. The default, `pid = blockIdx.x`, matches the "one block per patch" launch shape that [`prepare_launch_box`](launch_box.md) produces. `Query` is non-copyable.
 
 ??? note "`int get_patch_id() const` / `const PatchInfo& get_patch_info() const`"
     Introspection for advanced kernels that need to branch on patch metadata. Rarely used in normal code.
@@ -32,7 +32,7 @@ Query<256> query(context);
 
 ## **`dispatch`**
 
-The main entry point. `dispatch` is **collective across the block**: every thread in the block must call it, and you must pass in the cooperative-groups thread block and a [`ShmemAllocator`](shmem_allocator.md) so `Query` has room to stage connectivity.
+The main entry point. `dispatch` is **collective across the block**, i.e., every thread in the block must call it, and you must pass in the cooperative-groups thread block and a [`ShmemAllocator`](shmem_allocator.md) so `Query` has room to stage connectivity.
 
 ```cpp
 auto block = cooperative_groups::this_thread_block();
@@ -50,13 +50,13 @@ query.dispatch<Op::FV>(block, shrd_alloc, work);
     Runs a `prologue` → per-element invocation of `compute_op` → `epilogue` sequence for the query `Op`. `compute_op` is a device callable with signature `(InputHandle, OutputIterator&)`, exactly the same shape as in [`for_each<Op, blockThreads>`](../static/for_each.md#connectivity-based-for_each). `oriented` requests oriented traversal (only meaningful for `Op::VV` and `Op::VE`).
 
 ??? note "`dispatch<Op>(block, shrd_alloc, compute_op, active_set, oriented = false, allow_not_owned = false)`"
-    Active-set variant. `active_set` is a device predicate on the source handle; only elements for which it returns `true` are visited. The first argument type of `compute_op` and `active_set` must match (enforced by a `static_assert`). `allow_not_owned` permits invoking `compute_op` on elements not owned by the current patch (off by default).
+    Active-set variant. `active_set` is a device predicate on the source handle, i.e., only elements for which it returns `true` are visited. The first argument type of `compute_op` and `active_set` must match (enforced by a `static_assert`). `allow_not_owned` permits invoking `compute_op` on elements not owned by the current patch (off by default).
 
 After `dispatch` returns, `shrd_alloc` is restored to its pre-dispatch byte count, so any shared memory `Query` used is reclaimed.
 
 ---
 
-## **Manual Control: the Split API**
+## **Manual Control**
 
 For kernels that want to interleave work between the steps `dispatch` normally performs, `Query` exposes the three phases as separate methods. This is an advanced API, most users should prefer `dispatch`.
 
@@ -109,14 +109,14 @@ You can run several queries in the same kernel, in two patterns:
 
 ## **Orientation and Manifold Requirements**
 
-- The `oriented` flag is documented as valid for `Op::VV` and `Op::VE`; other ops ignore it or treat the mesh as oriented by default (e.g., `Op::FV`, `Op::FE`, `Op::EV`).
+- The `oriented` flag is documented as valid for `Op::VV` and `Op::VE`. Other ops ignore it or treat the mesh as oriented by default (e.g., `Op::FV`, `Op::FE`, `Op::EV`).
 - `Op::EVDiamond` and `Op::EE` require an **edge-manifold** input mesh. `prepare_launch_box` errors early if the mesh is not edge-manifold.
 
 For the full list of queries, see [supported query types](../static/for_each.md#supported-query-types).
 
 ---
 
-## **Typical In-Kernel Pattern**
+## **Typical Pattern**
 
 For a full walkthrough with a custom kernel body, see [Writing a custom CUDA kernel](../static/run_kernel.md#writing-a-custom-cuda-kernel). The gist:
 
