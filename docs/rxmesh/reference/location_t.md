@@ -1,6 +1,6 @@
 # **`locationT`**
 
-`locationT` is the small bitmask type that RXMesh uses to say **where** memory is allocated or **which side** of a host/device pair to act on. Every API that touches storage or launches compute, e.g., [attribute construction](../static/managing_attributes.md), [`Attribute::move` / `reset` / `release`](../static/working_with_attributes.md), [`DenseMatrix` construction and `move`](../matrix/dense_matrices.md), and [`RXMeshStatic::for_each_*`](../static/for_each.md#element-wise-for_each), takes a `locationT` argument.
+`locationT` is the small bitmask type that RXMesh uses to indicate where memory is allocated or which side of a host/device pair to act on. Every API that touches storage or launches compute, e.g., [attribute construction](../static/managing_attributes.md), [`Attribute::move` / `reset` / `release`](../static/working_with_attributes.md), [`DenseMatrix` construction and `move`](../matrix/dense_matrices.md), and [`RXMeshStatic::for_each_*`](../static/for_each.md#element-wise-for_each), takes a `locationT` argument.
 
 ---
 
@@ -32,8 +32,6 @@ The tags are **unscoped**, so you write `HOST`, `DEVICE`, `LOCATION_ALL` directl
 | `DEVICE` | `0x02` | GPU-side memory. |
 | `LOCATION_ALL` | `0x0F` | Both `HOST` and `DEVICE` (and any future bits). |
 
-There is **no** `NOT_ALLOCATED` constant, "nothing allocated" is `LOCATION_NONE`.
-
 ---
 
 ## **Bitmask Semantics**
@@ -52,4 +50,4 @@ attr->reset(1.f, HOST | DEVICE);    // zero both copies
 ```
 
 ??? note "`std::string location_to_string(locationT location)`"
-    Returns `"NONE"`, `"HOST"`, `"DEVICE"`, or `"ALL"` for the four canonical values. Unknown bit combinations log an error and return an empty string, so this is only suitable for the named single-flag values, not arbitrary masks.
+    Returns `"NONE"`, `"HOST"`, `"DEVICE"`, or `"ALL"` for the four values. Unknown bit combinations log an error and return an empty string, so this is only suitable for the named single-flag values, not arbitrary masks.
