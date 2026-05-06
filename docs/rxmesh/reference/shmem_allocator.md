@@ -1,6 +1,6 @@
 # **`ShmemAllocator`**
 
-`ShmemAllocator` is a **per-block bump allocator** over CUDA dynamic shared memory. It is the mechanism RXMesh uses to hand pieces of the block's dynamic shared memory to [`Query`](query.md) and to any scratch buffers your kernel wants to allocate on top. Because it is a pure bump allocator, allocations are `O(1)` and ordering matters: **deallocation is LIFO**.
+`ShmemAllocator` is a **per-block (bump) allocator** over CUDA dynamic shared memory. It is the mechanism RXMesh uses to hand pieces of the block's dynamic shared memory to [`Query`](query.md) and to any scratch buffers your kernel wants to allocate on top. Because it is a pure bump allocator, allocations are `O(1)` and ordering matters, e.g., **deallocation is LIFO**.
 
 Use `ShmemAllocator` whenever you write a kernel that you launch via [`run_kernel`](../static/run_kernel.md) and that carves its own shared-memory buffers.
 
@@ -31,13 +31,13 @@ ShmemAllocator shrd_alloc;  // constructed in a kernel thread
     Advances the internal pointer by `num_bytes`, aligning to `byte_alignment` first (8 by default). Returns a pointer to the start of the allocation, or `nullptr` if the allocation would overflow the dynamic shared-memory budget. Asserts the same condition in debug builds.
 
 ??? note "`template <class T> T* alloc(uint32_t count)`"
-    Typed convenience wrapper. Calls `alloc(count * sizeof(T), default_alignment)` and `reinterpret_cast`s the result. `static_assert`s that `sizeof(T) <= default_alignment` (i.e., `8`), since the allocator only guarantees 8-byte alignment; use the raw `alloc` with a larger alignment if you need more.
+    Typed convenience wrapper. Calls `alloc(count * sizeof(T), default_alignment)` and `reinterpret_cast`s the result. `static_assert`s that `sizeof(T) <= default_alignment` (i.e., `8`), since the allocator only guarantees 8-byte alignment. Use the raw `alloc` with a larger alignment if you need more.
 
 ---
 
 ## **Deallocation (LIFO only)**
 
-The deallocation APIs **subtract** from the bump pointer; they do **not** run any bookkeeping. They are safe only when you pop in reverse allocation order, mirroring a stack. Any other order silently creates overlap.
+The deallocation APIs **subtract** from the bump pointer. They do **not** run any bookkeeping. They are safe only when you pop in reverse allocation order, mirroring a stack. Any other order silently creates overlap.
 
 ??? note "`void dealloc(uint32_t num_bytes)`"
     Rewinds the pointer by `num_bytes`. Intended to undo the most recent allocation of the same size. Asserts that the pointer does not go below `SHMEM_START`.
@@ -61,7 +61,7 @@ The deallocation APIs **subtract** from the bump pointer; they do **not** run an
 
 ## **Cooperation with `prepare_launch_box` and `user_shmem`**
 
-If your kernel uses `ShmemAllocator` beyond what `Query` needs, you must tell [`prepare_launch_box`](launch_box.md#prepare_launch_box) how much extra it should size into `LaunchBox::smem_bytes_dyn`. The `user_shmem` callback exists for exactly this: it is invoked with the per-patch `(num_vertices, num_edges, num_faces)` counts and returns the extra bytes to reserve.
+If your kernel uses `ShmemAllocator` beyond what `Query` needs, you must tell [`prepare_launch_box`](launch_box.md#prepare_launch_box) how much extra it should size into `LaunchBox::smem_bytes_dyn`. The `user_shmem` callback exists for exactly this. It is invoked with the per-patch `(num_vertices, num_edges, num_faces)` counts and returns the extra bytes to reserve.
 
 ```cpp
 rx.prepare_launch_box(
