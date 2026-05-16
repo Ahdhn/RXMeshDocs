@@ -57,7 +57,15 @@ nav:
   - Matrices & Solvers:
     - Dense Matrices: rxmesh/matrix/dense_matrices.md
     - Sparse Matrices: rxmesh/matrix/sparse_matrices.md
-    - Linear Solvers: rxmesh/matrix/solvers.md
+    - Linear Solvers: rxmesh/matrix/solvers.md  
+  - Automatic Differentiation:
+    - Overview: rxmesh/diff/ad.md
+    - Dual Numbers: rxmesh/diff/scalar.md    
+    - Scalar Problem: rxmesh/diff/scalar_problem.md
+    - Vector Problem: rxmesh/diff/vector_problem.md
+    - Terms: rxmesh/diff/terms.md
+    - Non-linear Solvers: rxmesh/diff/nonlinear_solvers.md
+    - Advanced Topics: rxmesh/diff/advanced.md
   - Dynamic Mesh Processing:
     - Overview: rxmesh/dyn/dynamic.md
     - RXMeshDynamic: rxmesh/dyn/rxmesh_dynamic.md
@@ -67,14 +75,7 @@ nav:
       - CavityManager: rxmesh/dyn/cavity_manager.md
       - DEdgeHandle: rxmesh/dyn/dedge_handle.md
     - Host-Side Driver Loop: rxmesh/dyn/dynamic_loop.md
-  - Automatic Differentiation:
-    - Overview: rxmesh/diff/ad.md
-    - Dual Numbers: rxmesh/diff/scalar.md    
-    - Scalar Problem: rxmesh/diff/scalar_problem.md
-    - Vector Problem: rxmesh/diff/vector_problem.md
-    - Terms: rxmesh/diff/terms.md
-    - Non-linear Solvers: rxmesh/diff/nonlinear_solvers.md
-    - Advanced Topics: rxmesh/diff/advanced.md  
+    - Advanced Use Cases: rxmesh/dyn/advanced_use_cases.md  
   - Reference:
     - Handles: rxmesh/reference/handles.md
     - Iterators: rxmesh/reference/iterators.md
