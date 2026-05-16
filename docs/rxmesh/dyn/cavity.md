@@ -1,14 +1,12 @@
 # **Cavity Concepts**
 
-A **cavity** is the unit of topology change in RXMesh. Instead of exposing a
-separate primitive for every edit, RXMesh asks you to describe the edit as:
+A **cavity** is the unit of topology change in RXMesh. Instead of exposing a separate primitive for every edit, RXMesh allows the user to describe the edit as:
 
 1. Choose a seed element.
 2. Delete a local neighborhood around that seed.
 3. Fill the boundary loop with new vertices, edges, and faces.
 
-That pattern covers edge splits, edge flips, edge collapses, and larger local
-remeshing operations.
+That pattern covers any local operations, e.g., edge splits, edge flips, etc.
 
 ---
 
@@ -19,10 +17,7 @@ A cavity has two parts:
 - **Interior**: the elements removed by the cavity.
 - **Boundary**: the surviving loop that your fill-in reconnects.
 
-The cavity operation decides what the interior contains. For example,
-`CavityOp::E` starts from an edge and removes the edge plus its incident faces.
-That is enough for both edge split and edge flip. `CavityOp::EV` starts from an
-edge and removes the endpoint one-rings, which is the usual shape for edge
+The cavity operation decides what the interior contains. For example, `CavityOp::E` starts from an edge and removes the edge plus its incident faces. That is enough for both edge split and edge flip. `CavityOp::EV` starts from an edge and removes the endpoint one-rings, which is the usual shape for edge
 collapse.
 
 Inside the fill-in code, `CavityManager` exposes the boundary:
@@ -36,8 +31,7 @@ cavity.for_each_cavity(block, [&](uint16_t c, uint16_t size) {
 });
 ```
 
-The boundary is ordered. Consecutive boundary edges walk around the cavity, and
-the directed edge orientation is the orientation you use when building new
+The boundary is ordered. Consecutive boundary edges walk around the cavity, and the directed edge orientation is the orientation you use when building new
 faces.
 
 ---
@@ -78,15 +72,13 @@ __global__ void edit_kernel(Context context, VertexAttribute<float> coords)
 }
 ```
 
-The interesting algorithm-specific work is usually small: `should_edit(...)`
-decides whether an element becomes a seed, and `fill_cavity(...)` creates the
-replacement topology.
+The interesting work is usually small, i.e., `should_edit(...)` decides whether an element becomes a seed, and `fill_cavity(...)` creates the replacement topology.
 
 ---
 
 ## **What RXMesh Handles**
 
-A block may create many candidate cavities. RXMesh handles the difficult parts:
+A block may create many candidate cavities. RXMesh handles:
 
 - Cavities that overlap are filtered down to a non-conflicting subset.
 - Patches that cannot safely commit are retried by the scheduler.
@@ -96,9 +88,7 @@ A block may create many candidate cavities. RXMesh handles the difficult parts:
 - Failed fill-in can be rolled back with `recover(...)` or by returning invalid
   handles from `add_*`.
 
-The user-facing rule is simple: create candidate cavities freely, pass all live
-attributes to `prologue(...)`, fill only the cavities RXMesh gives you through
-`for_each_cavity(...)`, and always call `epilogue(...)`.
+The user simply create candidate cavities freely, pass all live attributes to `prologue(...)`, fill only the cavities RXMesh gives you through `for_each_cavity(...)`, and always call `epilogue(...)`.
 
 ---
 
@@ -112,19 +102,4 @@ CavityManager<blockThreads, CavityOp::EV> cavity(
     block, context, shrd_alloc, true);
 ```
 
-Set it to `true` when fill-in needs the geometry or attributes of deleted
-elements. Edge collapse, for example, usually reads the two endpoint positions
-of the collapsed edge to place the new vertex.
-
-Set it to `false` when the fill-in only needs the boundary. Edge flip often uses
-`false`, because it only connects the two opposite boundary vertices.
-
----
-
-## **Where to Go Next**
-
-- [`CavityOp`](cavity_op.md) explains how to choose the cavity type.
-- [`CavityManager`](cavity_manager.md) documents the device-side API.
-- [`DEdgeHandle`](dedge_handle.md) explains directed edges used in fill-in.
-- [Host-Side Driver Loop](dynamic_loop.md) shows the host loop around dynamic
-  kernels.
+Set it to `true` when fill-in needs the geometry or attributes of deleted elements. Edge collapse, for example, usually reads the two endpoint positions of the collapsed edge to place the new vertex. Set it to `false` when the fill-in only needs the boundary. Edge flip often uses `false`, because it only connects the two opposite boundary vertices.
