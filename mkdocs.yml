@@ -73,9 +73,7 @@ nav:
       - Concepts: rxmesh/dyn/cavity.md
       - CavityOp: rxmesh/dyn/cavity_op.md
       - CavityManager: rxmesh/dyn/cavity_manager.md
-      - DEdgeHandle: rxmesh/dyn/dedge_handle.md
-    - Host-Side Driver Loop: rxmesh/dyn/dynamic_loop.md
-    - Advanced Use Cases: rxmesh/dyn/advanced_use_cases.md  
+      - DEdgeHandle: rxmesh/dyn/dedge_handle.md    
   - Reference:
     - Handles: rxmesh/reference/handles.md
     - Iterators: rxmesh/reference/iterators.md

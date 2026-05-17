@@ -19,16 +19,13 @@ DEdgeHandle boundary = cavity.get_cavity_edge(c, i);
 DEdgeHandle created  = cavity.add_edge(src, dst);
 ```
 
-The boundary edges returned by `get_cavity_edge(...)` are ordered around the
-cavity. The edges returned by `add_edge(...)` are oriented from the first vertex
-argument to the second.
+The boundary edges returned by `get_cavity_edge(...)` are ordered around the cavity. The edges returned by `add_edge(...)` are oriented from the first vertex argument to the second.
 
 ---
 
 ## **Flipping Direction**
 
-Use `get_flip_dedge()` when the next face needs the same underlying edge in the
-opposite direction.
+Use `get_flip_dedge()` when the next face needs the same underlying edge in the opposite direction.
 
 ```cpp
 DEdgeHandle e0 = cavity.add_edge(new_v, boundary_v0);
@@ -47,8 +44,7 @@ DEdgeHandle next_e0 = e1.get_flip_dedge();
 
 ## **Using Edge Attributes**
 
-Attributes live on undirected edges, so convert to `EdgeHandle` before indexing
-an edge attribute.
+Attributes live on undirected edges, so convert to `EdgeHandle` before indexing an edge attribute.
 
 ```cpp
 DEdgeHandle de = cavity.add_edge(v0, v1);
@@ -69,8 +65,7 @@ if (de.is_valid()) {
     Patch id of the underlying edge.
 
 ??? note "`uint16_t local_id() const`"
-    Local id of the underlying undirected edge. A directed edge and its flipped
-    version share the same `local_id()`.
+    Local id of the underlying undirected edge. A directed edge and its flipped version share the same `local_id()`.
 
 ??? note "`uint64_t unique_id() const`"
     Packed id including the direction bit.
