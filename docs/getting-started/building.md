@@ -26,6 +26,7 @@ RXMesh relies on the following libraries:
 
 - [OpenMesh](https://www.graphics.rwth-aachen.de:9000/OpenMesh/OpenMesh) – reference CPU implementation
 - [RapidJSON](https://github.com/Tencent/rapidjson) – benchmarking results output
+- [rapidobj](https://github.com/guybrush77/rapidobj) – Loading OBJ files 
 - [GoogleTest](https://github.com/google/googletest) – unit testing
 - [spdlog](https://github.com/gabime/spdlog) – logging and diagnostics
 - [glm](https://github.com/g-truc/glm.git) – small vector/matrix operations
